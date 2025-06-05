@@ -92,7 +92,7 @@ export function TestimonialsSection() {
     }, 5000) // Change testimonial every 5 seconds
 
     return () => clearInterval(interval)
-  }, [isAutoPlaying, currentIndex])
+  }, [isAutoPlaying, currentIndex, nextTestimonial])
 
   const handleMouseEnter = () => setIsAutoPlaying(false)
   const handleMouseLeave = () => setIsAutoPlaying(true)
@@ -174,7 +174,7 @@ export function TestimonialsSection() {
 
                           {/* Testimonial Text */}
                           <blockquote className="text-gray-700 mb-4 italic text-sm sm:text-base leading-relaxed">
-                            "{testimonial.text}"
+                            &quot;{testimonial.text}&quot;
                           </blockquote>
 
                           {/* Author Info */}

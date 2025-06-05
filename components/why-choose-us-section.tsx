@@ -45,7 +45,7 @@ export function WhyChooseUsSection() {
 
           <p className="text-lg sm:text-xl text-gray-600 mb-8 leading-relaxed">
             Unlike generic study apps, LearnFun SL is built specifically for Sri Lankan syllabuses. Our tools are
-            designed with real students and real exam struggles in mind — everything you need, nothing you don't.
+            designed with real students and real exam struggles in mind — everything you need, nothing you don&apos;t.
           </p>
 
           <div className="bg-green-100 border border-green-200 rounded-lg p-6 mb-8">

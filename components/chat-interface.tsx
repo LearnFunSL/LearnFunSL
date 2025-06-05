@@ -275,7 +275,7 @@ export function ChatInterface({ className, userId, userImageUrl }: ChatInterface
         inputRef.current?.focus();
       }
     }
-  }, [messages, inputValue, selectedFile, isLoading]);
+  }, [messages, inputValue, selectedFile, isLoading, attachmentsForApi, userId]);
 
   const handleInputKeyPress = useCallback((event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter" && !event.shiftKey) {
