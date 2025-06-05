@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import { useInView } from "framer-motion"
-import { useRef, useState, useEffect } from "react"
+import { useRef, useState, useEffect, useCallback } from "react"
 import { ChevronLeft, ChevronRight, Quote, Star } from "lucide-react"
 
 interface Testimonial {
@@ -71,17 +71,17 @@ export function TestimonialsSection() {
     },
   ]
 
-  const nextTestimonial = () => {
+  const nextTestimonial = useCallback(() => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length)
-  }
+  }, []);
 
-  const prevTestimonial = () => {
+  const prevTestimonial = useCallback(() => {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + testimonials.length) % testimonials.length)
-  }
+  }, []);
 
-  const goToTestimonial = (index: number) => {
+  const goToTestimonial = useCallback((index: number) => {
     setCurrentIndex(index)
-  }
+  }, []);
 
   // Auto-play functionality
   useEffect(() => {
