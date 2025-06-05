@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, KeyboardEvent, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import TextareaAutosize from "react-textarea-autosize";
+import { ChatMessageBubble } from "./ChatMessageBubble";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -13,8 +14,8 @@ import {
   Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 import { SignInButton } from "@clerk/nextjs";
 
@@ -49,7 +50,11 @@ const generateMessageId = () => {
   return Date.now().toString() + Math.random().toString(36).substring(2, 9);
 };
 
-export function ChatInterface({ className, userId, userImageUrl }: ChatInterfaceProps) {
+export function ChatInterface({
+  className,
+  userId,
+  userImageUrl,
+}: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
@@ -61,7 +66,7 @@ export function ChatInterface({ className, userId, userImageUrl }: ChatInterface
           parsedMessages.map((msg) => ({
             ...msg,
             timestamp: new Date(msg.timestamp),
-          }))
+          })),
         );
       }
     } catch (error) {
@@ -75,7 +80,9 @@ export function ChatInterface({ className, userId, userImageUrl }: ChatInterface
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [chatLimitError, setChatLimitError] = useState<string | null>(null);
-  const [attachmentsForApi, setAttachmentsForApi] = useState<ApiAttachment[]>([]);
+  const [attachmentsForApi, setAttachmentsForApi] = useState<ApiAttachment[]>(
+    [],
+  );
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -112,7 +119,10 @@ export function ChatInterface({ className, userId, userImageUrl }: ChatInterface
         try {
           sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(messages));
         } catch (error) {
-          console.error("[ChatInterface] Error saving messages to sessionStorage:", error);
+          console.error(
+            "[ChatInterface] Error saving messages to sessionStorage:",
+            error,
+          );
         }
       } else {
         // Clear sessionStorage if messages array becomes empty
@@ -129,7 +139,8 @@ export function ChatInterface({ className, userId, userImageUrl }: ChatInterface
 
     const handleScroll = () => {
       const { scrollTop, scrollHeight, clientHeight } = scrollViewport;
-      autoScrollEnabled.current = scrollTop + clientHeight >= scrollHeight - SCROLL_THRESHOLD;
+      autoScrollEnabled.current =
+        scrollTop + clientHeight >= scrollHeight - SCROLL_THRESHOLD;
     };
 
     scrollViewport.addEventListener("scroll", handleScroll, { passive: true });
@@ -138,7 +149,9 @@ export function ChatInterface({ className, userId, userImageUrl }: ChatInterface
 
   const handleSendMessage = useCallback(async () => {
     if (!userId) {
-      console.warn("handleSendMessage called without a userId. This should be prevented by UI.");
+      console.warn(
+        "handleSendMessage called without a userId. This should be prevented by UI.",
+      );
       // Optionally, trigger SignInButton programmatically if possible, or show a toast.
       // For now, relying on the SignInButton wrapper around the input area.
       return;
@@ -160,7 +173,13 @@ export function ChatInterface({ className, userId, userImageUrl }: ChatInterface
       sender: "user",
       timestamp: new Date(),
       // Display attachment info from selectedFile, actual data for API is in attachmentsForApi
-      attachment: selectedFile ? { name: selectedFile.name, size: selectedFile.size, type: selectedFile.type } : undefined,
+      attachment: selectedFile
+        ? {
+            name: selectedFile.name,
+            size: selectedFile.size,
+            type: selectedFile.type,
+          }
+        : undefined,
     };
 
     setMessages((prev) => [...prev, newMessage]);
@@ -192,8 +211,8 @@ export function ChatInterface({ className, userId, userImageUrl }: ChatInterface
     try {
       // Prepare history just before the API call, excluding the new user message and AI placeholder
       const historyForAPI = messages
-        .filter(msg => msg.id !== newMessage.id) // Exclude current user message from history sent
-        .map(msg => ({ sender: msg.sender, text: msg.text }));
+        .filter((msg) => msg.id !== newMessage.id) // Exclude current user message from history sent
+        .map((msg) => ({ sender: msg.sender, text: msg.text }));
 
       const response = await fetch("/api/chat/gemini", {
         method: "POST",
@@ -243,7 +262,7 @@ export function ChatInterface({ className, userId, userImageUrl }: ChatInterface
                 return { ...msg, text: newText };
               }
               return msg;
-            })
+            }),
           );
         }
       };
@@ -257,16 +276,18 @@ export function ChatInterface({ className, userId, userImageUrl }: ChatInterface
       // Ensure the decoder flushes any remaining multi-byte characters
       const finalChunk = decoder.decode();
       updateAIMessageChunk(finalChunk);
-
     } catch (error: any) {
       console.error("Failed to send message or fetch AI response:", error);
       if (isMounted.current) {
         setMessages((prevMessages) =>
           prevMessages.map((msg) =>
             msg.id === aiResponseId
-              ? { ...msg, text: `Error: ${error.message || "Could not connect to AI"}` }
-              : msg
-          )
+              ? {
+                  ...msg,
+                  text: `Error: ${error.message || "Could not connect to AI"}`,
+                }
+              : msg,
+          ),
         );
       }
     } finally {
@@ -275,14 +296,24 @@ export function ChatInterface({ className, userId, userImageUrl }: ChatInterface
         inputRef.current?.focus();
       }
     }
-  }, [messages, inputValue, selectedFile, isLoading, attachmentsForApi, userId]);
+  }, [
+    messages,
+    inputValue,
+    selectedFile,
+    isLoading,
+    attachmentsForApi,
+    userId,
+  ]);
 
-  const handleInputKeyPress = useCallback((event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
-      handleSendMessage();
-    }
-  }, [handleSendMessage]);
+  const handleInputKeyPress = useCallback(
+    (event: KeyboardEvent<HTMLTextAreaElement>) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        handleSendMessage();
+      }
+    },
+    [handleSendMessage],
+  );
 
   const handleClearChat = useCallback(() => {
     setMessages([]);
@@ -296,71 +327,86 @@ export function ChatInterface({ className, userId, userImageUrl }: ChatInterface
     }
   }, []);
 
-  const handleFileSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (fileInputRef.current) {
-      // Reset to allow selecting the same file again if the user cancels and re-selects
-      // This is also important if a file was selected, then removed, then user wants to re-select it.
-      // However, we only want to do this if the event is from a fresh click, not if it's just clearing.
-      // For simplicity, we'll reset it here, assuming it's a new selection attempt.
-      // A more complex logic might be needed if we want to preserve the input value across modal closes without selection.
-    }
-
-    if (file) {
-      if (file.size > 15 * 1024 * 1024) { // 15MB limit (adjust as needed for Gemini)
-        setFileError("File is too large (max 15MB).");
-        setSelectedFile(null);
-        setAttachmentsForApi([]);
-        if (fileInputRef.current) fileInputRef.current.value = ""; // Clear input on error
-        return;
+  const handleFileSelect = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (fileInputRef.current) {
+        // Reset to allow selecting the same file again if the user cancels and re-selects
+        // This is also important if a file was selected, then removed, then user wants to re-select it.
+        // However, we only want to do this if the event is from a fresh click, not if it's just clearing.
+        // For simplicity, we'll reset it here, assuming it's a new selection attempt.
+        // A more complex logic might be needed if we want to preserve the input value across modal closes without selection.
       }
-      setSelectedFile(file);
-      setFileError(null);
 
-      const reader = new FileReader();
-      reader.onload = (loadEvent) => {
-        const dataUrl = loadEvent.target?.result as string;
-        if (dataUrl) {
-          try {
-            const parts = dataUrl.split(',');
-            if (parts.length < 2) {
-              console.error("Invalid Data URL format", dataUrl.substring(0,100));
-              throw new Error("Invalid Data URL format");
-            }
-            const mimeTypePart = parts[0].split(':')[1]?.split(';')[0];
-            const base64Data = parts[1];
-            if (!mimeTypePart || typeof base64Data === 'undefined') { // Check if base64Data is undefined
-              console.error("Could not parse Data URL parts. MimeType:", mimeTypePart, "Base64Data exists:", typeof base64Data !== 'undefined');
-              throw new Error("Could not parse Data URL parts");
-            }
-            setAttachmentsForApi([{ mimeType: mimeTypePart, data: base64Data }]);
-          } catch (error) {
-            console.error("Error processing file for API:", error);
-            setFileError("Error processing file. Please try another.");
-            setAttachmentsForApi([]);
-            setSelectedFile(null);
-            if (fileInputRef.current) fileInputRef.current.value = ""; // Clear input on error
-          }
+      if (file) {
+        if (file.size > 15 * 1024 * 1024) {
+          // 15MB limit (adjust as needed for Gemini)
+          setFileError("File is too large (max 15MB).");
+          setSelectedFile(null);
+          setAttachmentsForApi([]);
+          if (fileInputRef.current) fileInputRef.current.value = ""; // Clear input on error
+          return;
         }
-      };
-      reader.onerror = () => {
-        console.error("FileReader error");
-        setFileError("Could not read file. Please try again.");
-        setAttachmentsForApi([]);
+        setSelectedFile(file);
+        setFileError(null);
+
+        const reader = new FileReader();
+        reader.onload = (loadEvent) => {
+          const dataUrl = loadEvent.target?.result as string;
+          if (dataUrl) {
+            try {
+              const parts = dataUrl.split(",");
+              if (parts.length < 2) {
+                console.error(
+                  "Invalid Data URL format",
+                  dataUrl.substring(0, 100),
+                );
+                throw new Error("Invalid Data URL format");
+              }
+              const mimeTypePart = parts[0].split(":")[1]?.split(";")[0];
+              const base64Data = parts[1];
+              if (!mimeTypePart || typeof base64Data === "undefined") {
+                // Check if base64Data is undefined
+                console.error(
+                  "Could not parse Data URL parts. MimeType:",
+                  mimeTypePart,
+                  "Base64Data exists:",
+                  typeof base64Data !== "undefined",
+                );
+                throw new Error("Could not parse Data URL parts");
+              }
+              setAttachmentsForApi([
+                { mimeType: mimeTypePart, data: base64Data },
+              ]);
+            } catch (error) {
+              console.error("Error processing file for API:", error);
+              setFileError("Error processing file. Please try another.");
+              setAttachmentsForApi([]);
+              setSelectedFile(null);
+              if (fileInputRef.current) fileInputRef.current.value = ""; // Clear input on error
+            }
+          }
+        };
+        reader.onerror = () => {
+          console.error("FileReader error");
+          setFileError("Could not read file. Please try again.");
+          setAttachmentsForApi([]);
+          setSelectedFile(null);
+          if (fileInputRef.current) fileInputRef.current.value = ""; // Clear input on error
+        };
+        reader.readAsDataURL(file);
+      } else {
+        // This case handles when the file dialog is cancelled or no file is chosen.
+        // We might not want to clear selectedFile here if a file was already selected and user just re-opened dialog and cancelled.
+        // However, if event.target.files is empty, it means no file is currently selected from this input event.
+        // For simplicity, if `file` is undefined, we clear everything related to a new selection.
         setSelectedFile(null);
-        if (fileInputRef.current) fileInputRef.current.value = ""; // Clear input on error
-      };
-      reader.readAsDataURL(file);
-    } else {
-      // This case handles when the file dialog is cancelled or no file is chosen.
-      // We might not want to clear selectedFile here if a file was already selected and user just re-opened dialog and cancelled.
-      // However, if event.target.files is empty, it means no file is currently selected from this input event.
-      // For simplicity, if `file` is undefined, we clear everything related to a new selection.
-      setSelectedFile(null);
-      setAttachmentsForApi([]);
-      // Do not clear fileInputRef.current.value here, as it might prevent re-selecting the same file if the dialog was cancelled.
-    }
-  }, []);
+        setAttachmentsForApi([]);
+        // Do not clear fileInputRef.current.value here, as it might prevent re-selecting the same file if the dialog was cancelled.
+      }
+    },
+    [],
+  );
 
   const handleAttachmentClick = useCallback(() => {
     if (fileInputRef.current) {
@@ -368,12 +414,15 @@ export function ChatInterface({ className, userId, userImageUrl }: ChatInterface
     }
   }, []);
 
-  const handleCopyToClipboard = useCallback((text: string, messageId: string) => {
-    navigator.clipboard.writeText(text).then(() => {
-      setCopiedMessageId(messageId);
-      setTimeout(() => setCopiedMessageId(null), 2000);
-    });
-  }, []);
+  const handleCopyToClipboard = useCallback(
+    (text: string, messageId: string) => {
+      navigator.clipboard.writeText(text).then(() => {
+        setCopiedMessageId(messageId);
+        setTimeout(() => setCopiedMessageId(null), 2000);
+      });
+    },
+    [],
+  );
 
   return (
     <div
@@ -384,190 +433,119 @@ export function ChatInterface({ className, userId, userImageUrl }: ChatInterface
     >
       <div className="flex items-center justify-between p-3 border-b shrink-0">
         <h2 className="text-lg font-semibold">Chat with AI</h2>
-        <Button variant="ghost" size="icon" onClick={handleClearChat} aria-label="Clear chat">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleClearChat}
+          aria-label="Clear chat"
+        >
           <Trash2 className="h-5 w-5" />
         </Button>
       </div>
 
-      <ScrollArea 
-        className="flex-grow p-4 space-y-4" 
+      <ScrollArea
+        className="flex-grow p-4 space-y-4"
         viewportRef={chatContainerRef} // Assign ref to viewport for scroll detection
       >
         {messages.map((msg) => (
-          <div
+          <ChatMessageBubble
             key={msg.id}
-            className={cn(
-              "flex items-start gap-3 py-2 group", // Added group for copy button hover
-              msg.sender === "user" ? "flex-row-reverse" : "flex-row",
-            )}
-          >
-            <Avatar className="h-8 w-8 shrink-0 mt-1">
-              {/* TODO: Replace with actual user/AI avatar paths or logic */}
-              <AvatarImage 
-                src={msg.sender === "ai" ? "/logo.png" : userImageUrl} 
-                alt={msg.sender === "ai" ? "AI Avatar" : "User Avatar"} 
-              />
-              <AvatarFallback>
-                {msg.sender === "ai" ? "AI" : "U"}
-              </AvatarFallback>
-            </Avatar>
-            
-            <div className={cn("flex flex-col gap-0.5", msg.sender === "user" ? "items-end" : "items-start")}>
-              {/* Message bubble container */}
-              <div
-                className={cn(
-                  "relative flex flex-col max-w-[280px] sm:max-w-md md:max-w-lg rounded-lg px-3 py-2 shadow-sm text-sm",
-                  msg.sender === "user"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground",
-                )}
-              >
-                {/* Message text area - applying prose for AI messages */}
-                <div className={cn(msg.sender === "ai" ? "prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-p:whitespace-pre-wrap prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-blockquote:my-1 prose-code:px-1 prose-code:py-0.5 prose-code:bg-muted prose-code:rounded-sm prose-headings:my-2 prose-table:my-2 prose-table:border prose-table:border-collapse prose-th:border prose-th:p-2 prose-th:bg-muted prose-td:border prose-td:p-2 prose-tbody:divide-y prose-tbody:divide-gray-200 dark:prose-tbody:divide-gray-700 prose-thead:bg-gray-50 dark:prose-thead:bg-gray-800" : "")}>
-                  {msg.sender === "ai" ? (
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {msg.text}
-                    </ReactMarkdown>
-                  ) : (
-                    <p className="whitespace-pre-wrap break-words">
-                      {msg.text}
-                    </p>
-                  )}
-                </div>
-
-                {/* Attachment display */}
-                {msg.attachment && (
-                  <div 
-                    className={cn(
-                      "mt-2 p-2 rounded-md flex items-center gap-2 text-xs w-full max-w-xs",
-                      msg.sender === "user" ? "bg-primary/80" : "bg-muted-foreground/10"
-                    )}
-                  >
-                    <PaperclipIcon className="h-4 w-4 shrink-0" />
-                    <div className="flex flex-col overflow-hidden">
-                      <span className="font-medium truncate" title={msg.attachment.name}>{msg.attachment.name}</span>
-                      <span className={cn(msg.sender === "user" ? "text-primary-foreground/80" : "text-muted-foreground/80")}>
-                        {(msg.attachment.size / 1024 / 1024).toFixed(2)} MB
-                      </span>
-                    </div>
-                  </div>
-                )}
-
-                {/* Copy button */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute top-1 right-1 h-6 w-6 p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-150"
-                  onClick={() => handleCopyToClipboard(msg.text, msg.id)}
-                  aria-label="Copy message"
-                >
-                  {copiedMessageId === msg.id ? (
-                    <Check className="h-3.5 w-3.5 text-green-500" />
-                  ) : (
-                    <Copy className="h-3.5 w-3.5 text-foreground" />
-                  )}
-                </Button>
-              </div>
-              <p className="text-xs text-muted-foreground/70 px-1">
-                {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              </p>
-            </div>
-          </div>
+            msg={msg}
+            userImageUrl={userImageUrl}
+            handleCopyToClipboard={handleCopyToClipboard}
+            copiedMessageId={copiedMessageId}
+          />
         ))}
 
+        {/* Invisible element to mark the end of messages for scrolling */}
+        <div ref={messagesEndRef} className="h-0 w-0" />
+      </ScrollArea>
 
-      {/* Invisible element to mark the end of messages for scrolling */}
-      <div ref={messagesEndRef} className="h-0 w-0" />
-    </ScrollArea>
-
-    <div className="p-3 border-t-2 bg-card">
-      <input
-        type="file"
-        ref={fileInputRef}
-        onChange={handleFileSelect}
-        style={{ display: "none" }}
-        accept="image/*,application/pdf,.doc,.docx,.txt"
-      />
-
-      {selectedFile && (
-        <div className="mb-2 text-sm text-muted-foreground">
-          Attachment: {selectedFile?.name} (
-          {(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
-          <Button
-            variant="ghost"
-            size="sm"
-            className="ml-2 h-auto py-0 px-1 text-red-500 hover:text-red-700"
-            onClick={() => {
-              setSelectedFile(null);
-              setFileError(null);
-            }}
-          >
-            Remove
-          </Button>
-        </div>
-      )}
-
-      {fileError && (
-        <div className="mb-2 text-sm text-red-500">{fileError}</div>
-      )}
-
-      {chatLimitError && (
-        <div className="mb-2 text-sm text-center text-red-500 font-semibold p-2 bg-red-50 border border-red-200 rounded-md">
-          {chatLimitError}
-        </div>
-      )}
-
-      {!userId ? (
-        <div className="flex flex-col items-center gap-2 p-3 rounded-md border-2 border-dashed border-primary/30">
-          <TextareaAutosize
-            className="w-full bg-transparent outline-none resize-none px-3 py-3 rounded-md min-h-[45px] max-h-[100px] placeholder-muted-foreground text-center cursor-default"
-            placeholder="Please sign in to start chatting with our AI assistant."
-            readOnly
-            minRows={2}
-            value=""
-          />
-          <SignInButton mode="modal">
-            <Button variant="default" size="lg" className="w-full sm:w-auto">
-              Sign In to Chat
+      <div className="p-3 border-t-2 bg-card">
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileSelect}
+          style={{ display: "none" }}
+          accept="image/*,application/pdf,.doc,.docx,.txt"
+        />
+        {selectedFile && (
+          <div className="mb-2 text-sm text-muted-foreground">
+            Attachment: {selectedFile?.name} (
+            {(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
+            <Button
+              variant="ghost"
+              size="sm"
+              className="ml-2 h-auto py-0 px-1 text-red-500 hover:text-red-700"
+              onClick={() => {
+                setSelectedFile(null);
+                setFileError(null);
+              }}
+            >
+              Remove
             </Button>
-          </SignInButton>
-        </div>
-      ) : (
-        // Original interactive input area for signed-in users
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            className="p-2 text-muted-foreground hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 rounded-md"
-            onClick={handleAttachmentClick}
-            aria-label="Attach file"
-          >
-            <PaperclipIcon className="h-5 w-5" />
-          </button>
-
-          <div className="relative flex-1">
-            <TextareaAutosize
-              ref={inputRef}
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={handleInputKeyPress}
-              className="w-full bg-background outline-none resize-none px-3 py-3 rounded-md min-h-[45px] max-h-[200px] focus:ring-2 focus:ring-primary/30"
-              placeholder="Type your message or ask questions..."
-              disabled={isLoading} // Disable input when AI is responding
-              style={{ whiteSpace: "pre-wrap", lineHeight: "1.5" }}
-            />
           </div>
+        )}
+        {fileError && (
+          <div className="mb-2 text-sm text-red-500">{fileError}</div>
+        )}
+        {chatLimitError && (
+          <div className="mb-2 text-sm text-center text-red-500 font-semibold p-2 bg-red-50 border border-red-200 rounded-md">
+            {chatLimitError}
+          </div>
+        )}
+        {!userId ? (
+          <div className="flex flex-col items-center gap-2 p-3 rounded-md border-2 border-dashed border-primary/30">
+            <TextareaAutosize
+              className="w-full bg-transparent outline-none resize-none px-3 py-3 rounded-md min-h-[45px] max-h-[100px] placeholder-muted-foreground text-center cursor-default"
+              placeholder="Please sign in to start chatting with our AI assistant."
+              readOnly
+              minRows={2}
+              value=""
+            />
+            <SignInButton mode="modal">
+              <Button variant="default" size="lg" className="w-full sm:w-auto">
+                Sign In to Chat
+              </Button>
+            </SignInButton>
+          </div>
+        ) : (
+          // Original interactive input area for signed-in users
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              className="p-2 text-muted-foreground hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 rounded-md"
+              onClick={handleAttachmentClick}
+              aria-label="Attach file"
+            >
+              <PaperclipIcon className="h-5 w-5" />
+            </button>
 
-          <button
-            className="p-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
-            onClick={handleSendMessage}
-            disabled={isLoading || (!inputValue.trim() && !selectedFile)}
-            aria-label="Send message"
-          >
-            <SendHorizonal className="h-5 w-5" />
-          </button>
-        </div>
-      )} {/* This closing parenthesis and curly brace were effectively missing for the true branch of the ternary operator in the previous structure due to SignInButton wrapping logic */}
+            <div className="relative flex-1">
+              <TextareaAutosize
+                ref={inputRef}
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={handleInputKeyPress}
+                className="w-full bg-background outline-none resize-none px-3 py-3 rounded-md min-h-[45px] max-h-[200px] focus:ring-2 focus:ring-primary/30"
+                placeholder="Type your message or ask questions..."
+                style={{ whiteSpace: "pre-wrap", lineHeight: "1.5" }}
+                autoFocus
+              />
+            </div>
+
+            <button
+              className="p-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={handleSendMessage}
+              disabled={isLoading || (!inputValue.trim() && !selectedFile)}
+              aria-label="Send message"
+            >
+              <SendHorizonal className="h-5 w-5" />
+            </button>
+          </div>
+        )}{" "}
+        {/* This closing parenthesis and curly brace were effectively missing for the true branch of the ternary operator in the previous structure due to SignInButton wrapping logic */}
+      </div>
     </div>
-  </div>
-);
+  );
 }
