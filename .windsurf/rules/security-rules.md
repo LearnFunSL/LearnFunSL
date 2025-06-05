@@ -1,0 +1,35 @@
+---
+trigger: always_on
+---
+
+-Rate-limit ALL API endpoints.
+-Use Row Level Security (RLS) on ALL tables.
+-CAPTCHA required on all public auth routes.
+-Enable WAF (attack challenge) on Vercel/Cloudflare.
+-NEVER use raw SQL interpolation; use parameterized queries or ORM.
+-Limit upload file sizes and sanitize all file inputs.
+-Use server-only HTTP-only cookies wherever possible.
+-Log sensitive operations with timestamps and IPs.
+-Implement user+IP-based rate limiting.
+-ALWAYS run `npm audit` before deploy and fix critical/high vulnerabilities, and fix them.
+-No storing of passwords/tokens without hashing + salting.
+-Use 2FA on all admin/dashboard routes.
+-ALWAYS code environment-aware (dev, test, prod).
+-NEVER run test scripts in prod accidentally.
+-KEEP all environment-specific configs in separate files.
+-NEVER leak .env variables into client-side bundles.
+-Use feature flags to toggle features per environment safely.
+-Logging levels should adapt to environment (debug in dev, silent in prod).
+-Write full coverage tests for critical features (auth, payments, user flows).
+-Use mocking ONLY in unit tests, not dev or prod.
+-DO NOT test implementation details; test behavior.
+-Add edge case and timeout tests for all async flows.
+-Use test folders alongside source code for maintainability.
+-Write cleanup logic for all integration tests.
+-Use managed auth systems like Clerk, never roll your own.
+-Produce secure JWTs with proper expiration and signing.
+-Protect ALL public and private endpoints with auth middlewares.
+-NEVER expose auth logic or tokens to the frontend.
+-ALWAYS validate tokens server-side.
+-Keep all session/cookie data secure and server-only where possible.
+-Read provider documentation (e.g., Clerk docs) thoroughly before implementation.
