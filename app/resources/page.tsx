@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import resourcesData from "../lib/data/resources.json";
+import ResourceCard from "./ResourceCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,6 +22,7 @@ import {
   BookMarked,
   FileText,
   List,
+  Loader2,
 } from "lucide-react";
 import {
   GroupedSubjects,
@@ -28,6 +31,36 @@ import {
   gradeStreamSubjects,
   gradeTextbookSubjects,
 } from "@/lib/subject-data";
+
+// Define the Content interface for resource items
+interface Content {
+  id: string;
+  title: string;
+  type: "pastpaper" | "textbook" | "other";
+  subject: string;
+  grade: number;
+  year?: number | null;
+  term?: number | null;
+  medium: "english" | "sinhala" | "tamil";
+  file_url: string;
+  metadata: {
+    original_type?: string;
+    original_status?: string;
+    size?: string;
+    uploader?: string;
+    lastModified?: string;
+    duration?: string;
+    original_actual_type?: string;
+  };
+  created_at: string;
+}
+
+// Helper function to convert grade string (e.g., "grade-6") to number
+const gradeStringToNumber = (gradeString: string): number | null => {
+  if (!gradeString) return null;
+  const match = gradeString.match(/grade-(\d+)/i);
+  return match ? parseInt(match[1], 10) : null;
+};
 
 const grades = Array.from({ length: 13 }, (_, i) => `Grade ${i + 1}`);
 const years = [
@@ -67,6 +100,11 @@ export default function ResourcesPage() {
   const [selectedTypeForSubject, setSelectedTypeForSubject] =
     useState<string>(""); // Type chosen for subjectForTypeView
 
+  // State for actual resource data
+  const [allResources, setAllResources] = useState<Content[]>([]);
+  const [filteredResources, setFilteredResources] = useState<Content[]>([]);
+  const [isLoadingResources, setIsLoadingResources] = useState<boolean>(true);
+
   const handleClearFilters = () => {
     setSearchQuery("");
     setSelectedGrade("");
@@ -77,6 +115,10 @@ export default function ResourcesPage() {
     setSelectedSubject("");
     setCurrentView("filtersAndGrades"); // Reset view on clear
     setGradeForSubjectView("");
+    setSubjectForTypeView("");
+    setSelectedTypeForSubject("");
+    setFilteredResources([]);
+    setIsLoadingResources(false); // No loading state after clear
   };
 
   // Effect to update subjects when grade or type changes
@@ -174,6 +216,138 @@ export default function ResourcesPage() {
       window.scrollTo(0, 0);
     }
   }, [currentView]);
+
+  // Effect to load all resources from JSON on component mount
+  useEffect(() => {
+    setAllResources(resourcesData as Content[]);
+    setIsLoadingResources(false); // Initial load done
+  }, []);
+
+  // Effect to filter resources based on current selections
+  useEffect(() => {
+    setIsLoadingResources(true);
+    let processedResources = [...allResources];
+
+    // 1. Search Query Filter (applies universally if searchQuery is present)
+    if (searchQuery.trim()) {
+      processedResources = processedResources.filter((resource) =>
+        resource.title.toLowerCase().includes(searchQuery.toLowerCase().trim()),
+      );
+    }
+
+    let shouldDisplayResources = false;
+    let finalFilteredResources: Content[] = [];
+
+    if (
+      currentView === "selectTypeForSubjectView" &&
+      gradeForSubjectView &&
+      subjectForTypeView &&
+      selectedTypeForSubject
+    ) {
+      shouldDisplayResources = true;
+      const numericGrade = gradeStringToNumber(gradeForSubjectView);
+      // selectedTypeForSubject holds values like "Past Paper", "Textbook", "other"
+      const typeForComparison = selectedTypeForSubject
+        .toLowerCase()
+        .replace(/\s+/g, ""); // Converts "Past Paper" to "pastpaper", "Textbook" to "textbook"
+
+      if (numericGrade) {
+        processedResources = processedResources.filter(
+          (resource) => resource.grade === numericGrade,
+        );
+      }
+      processedResources = processedResources.filter(
+        (resource) =>
+          resource.subject.toLowerCase() === subjectForTypeView.toLowerCase(),
+      );
+      // resource.type is already "pastpaper", "textbook", or "other" as per Content interface
+      processedResources = processedResources.filter(
+        (resource) => resource.type === typeForComparison,
+      );
+
+      // Optionally, apply main year/term filters if they are set
+      if (selectedYear && !isNaN(parseInt(selectedYear))) {
+        const numericYear = parseInt(selectedYear, 10);
+        processedResources = processedResources.filter(
+          (resource) => resource.year === numericYear,
+        );
+      }
+      if (selectedTerm) {
+        const numericTermMatch = selectedTerm.match(/term-(\d+)/i);
+        const numericTerm = numericTermMatch
+          ? parseInt(numericTermMatch[1], 10)
+          : NaN;
+        if (!isNaN(numericTerm)) {
+          processedResources = processedResources.filter(
+            (resource) => resource.term === numericTerm,
+          );
+        }
+      }
+    } else if (currentView === "filtersAndGrades") {
+      if (selectedGrade && selectedType && selectedSubject) {
+        shouldDisplayResources = true;
+        const numericGradeFromFilter = gradeStringToNumber(selectedGrade);
+        const normalizedTypeFromFilter = selectedType.replace("-", "");
+
+        if (numericGradeFromFilter) {
+          processedResources = processedResources.filter(
+            (resource) => resource.grade === numericGradeFromFilter,
+          );
+        }
+        if (normalizedTypeFromFilter) {
+          processedResources = processedResources.filter(
+            (resource) =>
+              resource.type.toLowerCase() === normalizedTypeFromFilter,
+          );
+        }
+        processedResources = processedResources.filter(
+          (resource) =>
+            resource.subject.toLowerCase() === selectedSubject.toLowerCase(),
+        );
+
+        if (selectedYear && !isNaN(parseInt(selectedYear))) {
+          const numericYear = parseInt(selectedYear, 10);
+          processedResources = processedResources.filter(
+            (resource) => resource.year === numericYear,
+          );
+        }
+        if (selectedTerm) {
+          const numericTermMatch = selectedTerm.match(/term-(\d+)/i);
+          const numericTerm = numericTermMatch
+            ? parseInt(numericTermMatch[1], 10)
+            : NaN;
+          if (!isNaN(numericTerm)) {
+            processedResources = processedResources.filter(
+              (resource) => resource.term === numericTerm,
+            );
+          }
+        }
+      } else {
+        shouldDisplayResources = false;
+      }
+    }
+
+    if (shouldDisplayResources) {
+      finalFilteredResources = processedResources;
+    } else {
+      finalFilteredResources = [];
+    }
+
+    setFilteredResources(finalFilteredResources);
+    setIsLoadingResources(false);
+  }, [
+    allResources,
+    searchQuery,
+    currentView,
+    gradeForSubjectView,
+    subjectForTypeView,
+    selectedTypeForSubject,
+    selectedGrade,
+    selectedSubject,
+    selectedType,
+    selectedYear,
+    selectedTerm,
+  ]);
 
   return (
     <div className="container mx-auto py-8 px-4 md:px-6 lg:px-8">
@@ -353,6 +527,43 @@ export default function ResourcesPage() {
               </div>
             </section>
           )}
+
+          {/* Resource display for 'filtersAndGrades' view (if all main filters are set) */}
+          {selectedGrade && selectedType && selectedSubject && (
+            <section className="mt-10">
+              <h2 className="text-2xl font-semibold mb-6">
+                Filtered Resources:{" "}
+                {selectedGrade
+                  .replace(/-/g, " ")
+                  .replace(/\b\w/g, (l) => l.toUpperCase())}{" "}
+                - {selectedSubject} -{" "}
+                {selectedType
+                  .replace(/-/g, " ")
+                  .replace(/\b\w/g, (l) => l.toUpperCase())}
+                {selectedYear && ` - ${selectedYear}`}
+                {selectedTerm &&
+                  ` - ${selectedTerm.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}`}
+              </h2>
+              {isLoadingResources ? (
+                <div className="flex justify-center items-center py-10">
+                  <Loader2 className="w-12 h-12 animate-spin text-primary" />
+                  <p className="ml-4 text-lg text-gray-700 dark:text-gray-300">
+                    Loading resources...
+                  </p>
+                </div>
+              ) : filteredResources.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredResources.map((resource) => (
+                    <ResourceCard key={resource.id} resource={resource} />
+                  ))}
+                </div>
+              ) : (
+                <p className="text-center text-gray-500 dark:text-gray-400 py-10">
+                  No resources found matching your current filter combination.
+                </p>
+              )}
+            </section>
+          )}
         </>
       )}
       {currentView === "selectSubjectView" && gradeForSubjectView && (
@@ -520,40 +731,48 @@ export default function ResourcesPage() {
               <ArrowLeft className="mr-2 h-4 w-4" /> Back to Subjects
             </Button>
             <h2 className="text-3xl font-bold mb-8 text-center">
-              {gradeForSubjectView
+              {`${gradeForSubjectView
                 .replace(/-/g, " ")
-                .replace(/\b\w/g, (l) => l.toUpperCase())}{" "}
-              - {subjectForTypeView} - Select Type
+                .replace(/\b\w/g, (l) =>
+                  l.toUpperCase(),
+                )} - ${subjectForTypeView}`}
+              {selectedTypeForSubject
+                ? ` - ${selectedTypeForSubject
+                    .replace(/-/g, " ")
+                    .replace(/\b\w/g, (l) => l.toUpperCase())}`
+                : " - Select Type"}
             </h2>
             {selectedTypeForSubject ? (
-              <div className="text-center p-8 bg-green-50 rounded-lg shadow">
-                <h3 className="text-2xl font-semibold mb-4 text-green-700">
-                  Type Selected!
-                </h3>
-                <p className="text-lg">
-                  Grade:{" "}
-                  {gradeForSubjectView
-                    .replace(/-/g, " ")
-                    .replace(/\b\w/g, (l) => l.toUpperCase())}
-                  <br />
-                  Subject: {subjectForTypeView}
-                  <br />
-                  Type:{" "}
-                  {selectedTypeForSubject
-                    .replace(/-/g, " ")
-                    .replace(/\b\w/g, (l) => l.toUpperCase())}
-                </p>
-                <p className="mt-4 text-gray-600">
-                  (Resource listing for this selection will be implemented
-                  next.)
-                </p>
-                <Button
-                  variant="secondary"
-                  onClick={() => setSelectedTypeForSubject("")}
-                  className="mt-6"
-                >
-                  Select a different Type
-                </Button>
+              <div className="mt-8">
+                {" "}
+                {/* Main container for resource display. Ensure no other titles here. */}
+                {isLoadingResources ? (
+                  <div className="flex justify-center items-center py-10">
+                    <Loader2 className="w-12 h-12 animate-spin text-primary" />
+                    <p className="ml-4 text-lg text-gray-700 dark:text-gray-300">
+                      Loading resources...
+                    </p>
+                  </div>
+                ) : filteredResources.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredResources.map((resource) => (
+                      <ResourceCard key={resource.id} resource={resource} />
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-center text-gray-500 dark:text-gray-400 py-10">
+                    No resources found matching your criteria. Try adjusting
+                    your selections or search query.
+                  </p>
+                )}
+                <div className="text-center mt-8">
+                  <Button
+                    variant="secondary"
+                    onClick={() => setSelectedTypeForSubject("")}
+                  >
+                    Select a different Type
+                  </Button>
+                </div>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg mx-auto">
