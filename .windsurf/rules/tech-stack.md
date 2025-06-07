@@ -131,7 +131,7 @@ interface User {
 interface Content {
   id: string;
   title: string;
-  type: "pastpaper" | "textbook" | "video";
+  type: "pastpaper" | "textbook" | "other";
   subject: string;
   grade: number;
   year?: number;

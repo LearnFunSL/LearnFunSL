@@ -1,0 +1,351 @@
+[
+  {
+    "id": "res_001",
+    "title": "Grade 10 Math Textbook",
+    "type": "textbook",
+    "subject": "Mathematics",
+    "grade": 10,
+    "year": null,
+    "term": 1,
+    "medium": "english",
+    "file_url": "/uploads/mock/res_001_math_g10_ch1.pdf",
+    "metadata": {
+      "original_type": "Textbook Segment",
+      "original_status": "Published",
+      "size": "2.5 MB",
+      "uploader": "jane.smith@example.com",
+      "lastModified": "2023-03-16"
+    },
+    "created_at": "2023-03-15T00:00:00.000Z"
+  },
+  {
+    "id": "res_002",
+    "title": "Physics Video: Kinematics Part 1",
+    "type": "other",
+    "subject": "Physics",
+    "grade": 12,
+    "year": null,
+    "term": 1,
+    "medium": "sinhala",
+    "file_url": "/uploads/mock/res_002_physics_kinematics_p1.mp4",
+    "metadata": {
+      "original_type": "Video",
+      "original_actual_type": "video",
+      "original_status": "Published",
+      "duration": "15:30 min",
+      "uploader": "john.doe@example.com",
+      "lastModified": "2023-04-22"
+    },
+    "created_at": "2023-04-20T00:00:00.000Z"
+  },
+  {
+    "id": "res_003",
+    "title": "2022 A/L Chem Paper - MCQ Section",
+    "type": "pastpaper",
+    "subject": "Chemistry",
+    "grade": 13,
+    "year": 2022,
+    "term": 1,
+    "medium": "tamil",
+    "file_url": "/uploads/mock/res_003_chem_al_2022_mcq.pdf",
+    "metadata": {
+      "original_type": "Past Paper Section",
+      "original_status": "Needs Review",
+      "size": "800 KB",
+      "uploader": "admin@learnfunsl.com",
+      "lastModified": "2023-01-11"
+    },
+    "created_at": "2023-01-10T00:00:00.000Z"
+  },
+  {
+    "id": "res_004",
+    "title": "Grade 8 English Literature - Poetry Unit",
+    "type": "textbook",
+    "subject": "English",
+    "grade": 8,
+    "year": null,
+    "term": 2,
+    "medium": "english",
+    "file_url": "/uploads/mock/res_004_eng_g8_poetry.pdf",
+    "metadata": {
+      "original_type": "Textbook Segment",
+      "original_status": "Published",
+      "size": "1.8 MB",
+      "uploader": "sarah.wilson@example.com",
+      "lastModified": "2023-06-12"
+    },
+    "created_at": "2023-06-10T00:00:00.000Z"
+  },
+  {
+    "id": "res_005",
+    "title": "Biology Lab: Photosynthesis Experiment",
+    "type": "other",
+    "subject": "Biology",
+    "grade": 11,
+    "year": null,
+    "term": 3,
+    "medium": "sinhala",
+    "file_url": "/uploads/mock/res_005_bio_photosynthesis_lab.mp4",
+    "metadata": {
+      "original_type": "Video",
+      "original_actual_type": "video",
+      "original_status": "Published",
+      "duration": "22:45 min",
+      "uploader": "dr.perera@example.com",
+      "lastModified": "2023-08-15"
+    },
+    "created_at": "2023-08-13T00:00:00.000Z"
+  },
+  {
+    "id": "res_006",
+    "title": "2021 O/L Mathematics Paper II",
+    "type": "pastpaper",
+    "subject": "Mathematics",
+    "grade": 11,
+    "year": 2021,
+    "term": null,
+    "medium": "english",
+    "file_url": "/uploads/mock/res_006_math_ol_2021_p2.pdf",
+    "metadata": {
+      "original_type": "Past Paper",
+      "original_status": "Published",
+      "size": "1.2 MB",
+      "uploader": "exam.board@example.com",
+      "lastModified": "2023-02-20"
+    },
+    "created_at": "2023-02-18T00:00:00.000Z"
+  },
+  {
+    "id": "res_007",
+    "title": "Grade 9 History - Ancient Civilizations",
+    "type": "textbook",
+    "subject": "History",
+    "grade": 9,
+    "year": null,
+    "term": 1,
+    "medium": "tamil",
+    "file_url": "/uploads/mock/res_007_history_g9_ancient.pdf",
+    "metadata": {
+      "original_type": "Textbook Segment",
+      "original_status": "Needs Review",
+      "size": "3.1 MB",
+      "uploader": "tamil.education@example.com",
+      "lastModified": "2023-05-08"
+    },
+    "created_at": "2023-05-05T00:00:00.000Z"
+  },
+  {
+    "id": "res_008",
+    "title": "Physics Practical: Simple Pendulum",
+    "type": "other",
+    "subject": "Physics",
+    "grade": 10,
+    "year": null,
+    "term": 2,
+    "medium": "english",
+    "file_url": "/uploads/mock/res_008_physics_pendulum_prac.pdf",
+    "metadata": {
+      "original_type": "Practical Guide",
+      "original_actual_type": "document",
+      "original_status": "Published",
+      "size": "950 KB",
+      "uploader": "physics.dept@example.com",
+      "lastModified": "2023-07-03"
+    },
+    "created_at": "2023-07-01T00:00:00.000Z"
+  },
+  {
+    "id": "res_009",
+    "title": "2023 A/L Economics Essay Questions",
+    "type": "pastpaper",
+    "subject": "Economics",
+    "grade": 13,
+    "year": 2023,
+    "term": 1,
+    "medium": "sinhala",
+    "file_url": "/uploads/mock/res_009_econ_al_2023_essay.pdf",
+    "metadata": {
+      "original_type": "Past Paper Section",
+      "original_status": "Published",
+      "size": "650 KB",
+      "uploader": "admin@learnfunsl.com",
+      "lastModified": "2023-09-28"
+    },
+    "created_at": "2023-09-25T00:00:00.000Z"
+  },
+  {
+    "id": "res_010",
+    "title": "Grade 7 Science - States of Matter",
+    "type": "other",
+    "subject": "Science",
+    "grade": 7,
+    "year": null,
+    "term": 1,
+    "medium": "english",
+    "file_url": "/uploads/mock/res_010_science_states_matter.pptx",
+    "metadata": {
+      "original_type": "Presentation",
+      "original_actual_type": "presentation",
+      "original_status": "Published",
+      "size": "4.2 MB",
+      "uploader": "teacher.presentation@example.com",
+      "lastModified": "2023-03-25"
+    },
+    "created_at": "2023-03-22T00:00:00.000Z"
+  },
+  {
+    "id": "res_011",
+    "title": "ICT Programming Tutorial - Python Basics",
+    "type": "other",
+    "subject": "ICT",
+    "grade": 12,
+    "year": null,
+    "term": 3,
+    "medium": "english",
+    "file_url": "/uploads/mock/res_011_ict_python_basics.mp4",
+    "metadata": {
+      "original_type": "Video",
+      "original_actual_type": "video",
+      "original_status": "Published",
+      "duration": "35:12 min",
+      "uploader": "coding.instructor@example.com",
+      "lastModified": "2023-10-15"
+    },
+    "created_at": "2023-10-12T00:00:00.000Z"
+  },
+  {
+    "id": "res_012",
+    "title": "2020 O/L Science Paper - Theory Section",
+    "type": "pastpaper",
+    "subject": "Science",
+    "grade": 11,
+    "year": 2020,
+    "term": null,
+    "medium": "tamil",
+    "file_url": "/uploads/mock/res_012_science_ol_2020_theory.pdf",
+    "metadata": {
+      "original_type": "Past Paper Section",
+      "original_status": "Published",
+      "size": "1.4 MB",
+      "uploader": "exam.archive@example.com",
+      "lastModified": "2023-01-30"
+    },
+    "created_at": "2023-01-28T00:00:00.000Z"
+  },
+  {
+    "id": "res_013",
+    "title": "Grade 6 Sinhala Language - Grammar Exercises",
+    "type": "textbook",
+    "subject": "Sinhala",
+    "grade": 6,
+    "year": null,
+    "term": 2,
+    "medium": "sinhala",
+    "file_url": "/uploads/mock/res_013_sinhala_g6_grammar.pdf",
+    "metadata": {
+      "original_type": "Textbook Segment",
+      "original_status": "Published",
+      "size": "2.8 MB",
+      "uploader": "sinhala.teacher@example.com",
+      "lastModified": "2023-04-18"
+    },
+    "created_at": "2023-04-15T00:00:00.000Z"
+  },
+  {
+    "id": "res_014",
+    "title": "Chemistry Lab Safety Guidelines",
+    "type": "other",
+    "subject": "Chemistry",
+    "grade": 10,
+    "year": null,
+    "term": null,
+    "medium": "english",
+    "file_url": "/uploads/mock/res_014_chem_safety_guide.pdf",
+    "metadata": {
+      "original_type": "Guidelines",
+      "original_actual_type": "document",
+      "original_status": "Published",
+      "size": "750 KB",
+      "uploader": "safety.officer@example.com",
+      "lastModified": "2023-02-14"
+    },
+    "created_at": "2023-02-12T00:00:00.000Z"
+  },
+  {
+    "id": "res_015",
+    "title": "2022 A/L Biology Practical Paper",
+    "type": "pastpaper",
+    "subject": "Biology",
+    "grade": 13,
+    "year": 2022,
+    "term": 2,
+    "medium": "english",
+    "file_url": "/uploads/mock/res_015_bio_al_2022_practical.pdf",
+    "metadata": {
+      "original_type": "Past Paper",
+      "original_status": "Needs Review",
+      "size": "1.1 MB",
+      "uploader": "bio.department@example.com",
+      "lastModified": "2023-11-05"
+    },
+    "created_at": "2023-11-02T00:00:00.000Z"
+  },
+  {
+    "id": "res_016",
+    "title": "Grade 11 Geography - Climate and Weather",
+    "type": "textbook",
+    "subject": "Geography",
+    "grade": 11,
+    "year": null,
+    "term": 3,
+    "medium": "sinhala",
+    "file_url": "/uploads/mock/res_016_geo_g11_climate.pdf",
+    "metadata": {
+      "original_type": "Textbook Segment",
+      "original_status": "Published",
+      "size": "3.7 MB",
+      "uploader": "geography.team@example.com",
+      "lastModified": "2023-08-30"
+    },
+    "created_at": "2023-08-28T00:00:00.000Z"
+  },
+  {
+    "id": "res_017",
+    "title": "Mathematics Problem Solving Strategies",
+    "type": "other",
+    "subject": "Mathematics",
+    "grade": 9,
+    "year": null,
+    "term": null,
+    "medium": "tamil",
+    "file_url": "/uploads/mock/res_017_math_problem_solving.mp4",
+    "metadata": {
+      "original_type": "Video",
+      "original_actual_type": "video",
+      "original_status": "Published",
+      "duration": "28:18 min",
+      "uploader": "math.tutor@example.com",
+      "lastModified": "2023-06-22"
+    },
+    "created_at": "2023-06-20T00:00:00.000Z"
+  },
+  {
+    "id": "res_018",
+    "title": "2023 O/L English Language Paper",
+    "type": "pastpaper",
+    "subject": "English",
+    "grade": 11,
+    "year": 2023,
+    "term": null,
+    "medium": "english",
+    "file_url": "/uploads/mock/res_018_eng_ol_2023_paper.pdf",
+    "metadata": {
+      "original_type": "Past Paper",
+      "original_status": "Published",
+      "size": "890 KB",
+      "uploader": "english.dept@example.com",
+      "lastModified": "2023-12-08"
+    },
+    "created_at": "2023-12-05T00:00:00.000Z"
+  }
+]
