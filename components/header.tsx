@@ -90,7 +90,7 @@ export function Header() {
                   aria-label={`Select language, current language: ${currentLanguage}`}
                 >
                   <Globe className="w-4 h-4" />
-                  <span>{currentLanguage}</span>
+                  <span className="flex-shrink-0">{currentLanguage}</span>
                   <ChevronDown className="w-3 h-3" />
                 </Button>
               </DropdownMenuTrigger>
@@ -108,9 +108,9 @@ export function Header() {
             </DropdownMenu>
 
             <SignedOut>
-              <div className="bg-blue-600 hover:bg-blue-700 text-white inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2">
+              <Button asChild variant="default" size="default">
                 <SignInButton mode="modal">Login</SignInButton>
-              </div>
+              </Button>
             </SignedOut>
             <SignedIn>
               <UserButton afterSignOutUrl="/" />
@@ -164,7 +164,7 @@ export function Header() {
                       aria-label={`Select language, current language: ${currentLanguage}`}
                     >
                       <Globe className="w-4 h-4" />
-                      <span>{currentLanguage}</span>
+                      <span className="flex-shrink-0">{currentLanguage}</span>
                       <ChevronDown className="w-3 h-3" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -182,9 +182,9 @@ export function Header() {
                 </DropdownMenu>
 
                 <SignedOut>
-                  <div className="bg-blue-600 hover:bg-blue-700 text-white inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2">
+                  <Button asChild variant="default" size="default">
                     <SignInButton mode="modal">Login</SignInButton>
-                  </div>
+                  </Button>
                 </SignedOut>
                 <SignedIn>
                   <UserButton afterSignOutUrl="/" />

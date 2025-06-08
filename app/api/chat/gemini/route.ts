@@ -283,22 +283,9 @@ export async function POST(req: NextRequest) {
   try {
     const { message, history, attachments } = await req.json();
 
-    console.log(
-      `[${new Date().toISOString()}] POST Handler: Received message: "${message ? message.substring(0, 50) + "..." : "undefined"}"`,
-    );
     if (attachments && attachments.length > 0) {
-      console.log(
-        `[${new Date().toISOString()}] POST Handler: Received ${attachments.length} attachment(s):`,
-      );
-      attachments.forEach((att: Attachment, index: number) => {
-        console.log(
-          `  Attachment ${index + 1}: mimeType: ${att.mimeType}, data length: ${att.data ? att.data.length : 0}`,
-        );
-      });
+      attachments.forEach((att: Attachment, index: number) => {});
     } else {
-      console.log(
-        `[${new Date().toISOString()}] POST Handler: No attachments received.`,
-      );
     }
 
     if (!message) {

@@ -139,9 +139,6 @@ export default function ResourcesPage() {
           ...gradePastPaperSubjects[currentGradeKey].optionalGroup3,
         ];
         setSubjectsToDisplay(allPastPaperSubjects);
-        console.log(
-          `[Debug] Loaded ${allPastPaperSubjects.length} past paper subjects for ${currentGradeKey}`,
-        );
       } else if (
         ["grade-12", "grade-13"].includes(currentGradeKey) &&
         gradeStreamSubjects[currentGradeKey]
@@ -150,15 +147,9 @@ export default function ResourcesPage() {
           gradeStreamSubjects[currentGradeKey],
         ).flat();
         setSubjectsToDisplay(allStreamSubjects);
-        console.log(
-          `[Debug] Loaded ${allStreamSubjects.length} stream subjects for ${currentGradeKey}`,
-        );
       } else if (gradeTextbookSubjects[currentGradeKey]) {
         // For Grades 1-9
         setSubjectsToDisplay(gradeTextbookSubjects[currentGradeKey]);
-        console.log(
-          `[Debug] Loaded ${gradeTextbookSubjects[currentGradeKey].length} textbook subjects for ${currentGradeKey}`,
-        );
       } else {
         console.warn(
           `No subjects defined for ${currentGradeKey} in selectSubjectView.`,
@@ -178,9 +169,6 @@ export default function ResourcesPage() {
         gradeTextbookSubjects[filterSelectedGradeKey]
       ) {
         setSubjectsToDisplay(gradeTextbookSubjects[filterSelectedGradeKey]);
-        console.log(
-          `[Debug] Loaded ${gradeTextbookSubjects[filterSelectedGradeKey].length} textbook subjects for ${filterSelectedGradeKey} via filters.`,
-        );
       } else if (
         selectedType === "past-paper" &&
         ["grade-10", "grade-11"].includes(filterSelectedGradeKey) &&
@@ -193,9 +181,6 @@ export default function ResourcesPage() {
           ...gradePastPaperSubjects[filterSelectedGradeKey].optionalGroup3,
         ];
         setSubjectsToDisplay(allPastPaperSubjects);
-        console.log(
-          `[Debug] Loaded ${allPastPaperSubjects.length} past paper subjects for ${filterSelectedGradeKey} via filters.`,
-        );
       } else if (selectedType === "past-paper") {
         // Handle past papers for grades 1-9 if data existed
         console.warn(
