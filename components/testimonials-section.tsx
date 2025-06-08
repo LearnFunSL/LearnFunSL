@@ -1,117 +1,68 @@
-"use client"
+"use client";
 
-import { motion, AnimatePresence } from "framer-motion"
-import { useInView } from "framer-motion"
-import { useRef, useState, useEffect, useCallback } from "react"
-import { ChevronLeft, ChevronRight, Quote, Star } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion";
+import { useInView } from "framer-motion";
+import { useRef, useState, useEffect, useCallback } from "react";
+import { ChevronLeft, ChevronRight, Quote, Star } from "lucide-react";
 
-interface Testimonial {
-  id: number
-  text: string
-  author: string
-  title: string
-  affiliation: string
-  rating: number
-}
+import { testimonials, type Testimonial } from "@/lib/testimonials-data";
 
 export function TestimonialsSection() {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-100px" })
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true)
-
-  const testimonials: Testimonial[] = [
-    {
-      id: 1,
-      text: "LearnFun SL completely transformed my approach to studying. The past papers and AI chatbot helped me understand complex physics concepts easily!",
-      author: "Kavitha Perera",
-      title: "A/L Student",
-      affiliation: "Ananda College, Colombo",
-      rating: 5,
-    },
-    {
-      id: 2,
-      text: "As a teacher, I'm impressed by the quality of resources. The multilingual support helps me reach all my students effectively.",
-      author: "Mr. Rajesh Kumar",
-      title: "Mathematics Teacher",
-      affiliation: "Royal College, Kandy",
-      rating: 5,
-    },
-    {
-      id: 3,
-      text: "My daughter was struggling with her O/L preparation and feeling very stressed. LearnFun SL made learning fun again! The video lessons in Tamil really helped her understand better.",
-      author: "Mrs. Priya Selvam",
-      title: "Parent",
-      affiliation: "Jaffna",
-      rating: 5,
-    },
-    {
-      id: 4,
-      text: "The flashcards feature is amazing! I created custom decks for Biology terms and it helped me memorize everything faster. Plus, it's completely free!",
-      author: "Saman Wickramasinghe",
-      title: "A/L Student",
-      affiliation: "Nalanda College, Colombo",
-      rating: 5,
-    },
-    {
-      id: 5,
-      text: "The calendar feature keeps me organized with assignments and exam dates. The progress tracker motivates me to study consistently.",
-      author: "Nimesha Fernando",
-      title: "O/L Student",
-      affiliation: "Visakha Vidyalaya, Colombo",
-      rating: 5,
-    },
-    {
-      id: 6,
-      text: "The peer tutoring feature connected me with senior students who helped me with Chemistry. It's like having a personal tutor for free!",
-      author: "Tharaka Rathnayake",
-      title: "A/L Student",
-      affiliation: "D.S. Senanayake College",
-      rating: 5,
-    },
-  ]
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
   const nextTestimonial = useCallback(() => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length)
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
   }, []);
 
   const prevTestimonial = useCallback(() => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + testimonials.length) % testimonials.length)
+    setCurrentIndex(
+      (prevIndex) =>
+        (prevIndex - 1 + testimonials.length) % testimonials.length,
+    );
   }, []);
 
   const goToTestimonial = useCallback((index: number) => {
-    setCurrentIndex(index)
+    setCurrentIndex(index);
   }, []);
 
   // Auto-play functionality
   useEffect(() => {
-    if (!isAutoPlaying) return
+    if (!isAutoPlaying) return;
 
     const interval = setInterval(() => {
-      nextTestimonial()
-    }, 5000) // Change testimonial every 5 seconds
+      nextTestimonial();
+    }, 5000); // Change testimonial every 5 seconds
 
-    return () => clearInterval(interval)
-  }, [isAutoPlaying, currentIndex, nextTestimonial])
+    return () => clearInterval(interval);
+  }, [isAutoPlaying, currentIndex, nextTestimonial]);
 
-  const handleMouseEnter = () => setIsAutoPlaying(false)
-  const handleMouseLeave = () => setIsAutoPlaying(true)
+  const handleMouseEnter = () => setIsAutoPlaying(false);
+  const handleMouseLeave = () => setIsAutoPlaying(true);
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
-      <Star key={i} className={`w-4 h-4 ${i < rating ? "text-yellow-400 fill-current" : "text-gray-300"}`} />
-    ))
-  }
+      <Star
+        key={i}
+        className={`w-4 h-4 ${i < rating ? "text-yellow-400 fill-current" : "text-gray-300"}`}
+      />
+    ));
+  };
 
   // Get visible testimonials (current, previous, and next)
   const getVisibleTestimonials = () => {
-    const prev = (currentIndex - 1 + testimonials.length) % testimonials.length
-    const next = (currentIndex + 1) % testimonials.length
-    return [prev, currentIndex, next]
-  }
+    const prev = (currentIndex - 1 + testimonials.length) % testimonials.length;
+    const next = (currentIndex + 1) % testimonials.length;
+    return [prev, currentIndex, next];
+  };
 
   return (
-    <section ref={ref} className="py-16 bg-gradient-to-br from-blue-50 via-white to-green-50">
+    <section
+      ref={ref}
+      className="py-16 bg-gradient-to-br from-blue-50 via-white to-green-50"
+    >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -119,20 +70,27 @@ export function TestimonialsSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-10"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">What Our Community Says</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            What Our Community Says
+          </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Hear from students, teachers, and parents who have experienced the transformative power of LearnFun SL
+            Hear from students, teachers, and parents who have experienced the
+            transformative power of LearnFun SL
           </p>
         </motion.div>
 
-        <div className="relative max-w-5xl mx-auto" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+        <div
+          className="relative max-w-5xl mx-auto"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
           {/* Carousel Container */}
           <div className="overflow-hidden">
             <div className="relative h-64 sm:h-56">
               <AnimatePresence initial={false} mode="popLayout">
                 {getVisibleTestimonials().map((index, i) => {
-                  const testimonial = testimonials[index]
-                  const position = i - 1 // -1 = left, 0 = center, 1 = right
+                  const testimonial = testimonials[index];
+                  const position = i - 1; // -1 = left, 0 = center, 1 = right
 
                   return (
                     <motion.div
@@ -170,7 +128,9 @@ export function TestimonialsSection() {
 
                         <div className="flex-1">
                           {/* Rating */}
-                          <div className="flex mb-2">{renderStars(testimonial.rating)}</div>
+                          <div className="flex mb-2">
+                            {renderStars(testimonial.rating)}
+                          </div>
 
                           {/* Testimonial Text */}
                           <blockquote className="text-gray-700 mb-4 italic text-sm sm:text-base leading-relaxed">
@@ -183,7 +143,9 @@ export function TestimonialsSection() {
                               {testimonial.author.charAt(0)}
                             </div>
                             <div>
-                              <h4 className="font-semibold text-gray-900 text-sm sm:text-base">{testimonial.author}</h4>
+                              <h4 className="font-semibold text-gray-900 text-sm sm:text-base">
+                                {testimonial.author}
+                              </h4>
                               <p className="text-xs text-gray-600">
                                 {testimonial.title}, {testimonial.affiliation}
                               </p>
@@ -192,7 +154,7 @@ export function TestimonialsSection() {
                         </div>
                       </div>
                     </motion.div>
-                  )
+                  );
                 })}
               </AnimatePresence>
             </div>
@@ -222,7 +184,9 @@ export function TestimonialsSection() {
                 key={index}
                 onClick={() => goToTestimonial(index)}
                 className={`w-2 h-2 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  index === currentIndex ? "bg-blue-600 w-6" : "bg-gray-300 hover:bg-gray-400"
+                  index === currentIndex
+                    ? "bg-blue-600 w-6"
+                    : "bg-gray-300 hover:bg-gray-400"
                 }`}
                 aria-label={`Go to testimonial ${index + 1}`}
               />
@@ -252,5 +216,5 @@ export function TestimonialsSection() {
         </motion.div>
       </div>
     </section>
-  )
+  );
 }

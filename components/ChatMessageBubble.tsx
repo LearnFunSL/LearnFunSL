@@ -20,9 +20,6 @@ interface Message {
     size: number;
     type: string;
   };
-  // name: string; // These seem redundant if attachment is used
-  // size: number;
-  // type: string;
 }
 
 interface ChatMessageBubbleProps {
@@ -95,11 +92,6 @@ export function ChatMessageBubble({
             {/* You might want to generate initials from user's name if available */}
             U
           </AvatarFallback>
-        </Avatar>
-      )}
-      {!isUser && !userImageUrl && isUser && (
-        /* Fallback for user if no image but still user message - though logic above should handle user image */ <Avatar className="h-8 w-8 shrink-0">
-          <AvatarFallback>U</AvatarFallback>
         </Avatar>
       )}
     </div>

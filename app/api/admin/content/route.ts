@@ -77,7 +77,6 @@ export async function POST(request: NextRequest) {
     };
 
     mockContent.push(newContent);
-    console.log("Content created:", newContent);
     // In a real scenario, you might return the path to the uploaded file or its ID
     return NextResponse.json(newContent, { status: 201 });
   } catch (error) {
@@ -122,7 +121,6 @@ export async function PUT(request: NextRequest) {
     if (body.grade) updatedContent.grade = parseInt(body.grade, 10);
 
     mockContent[contentIndex] = updatedContent;
-    console.log("Content updated:", updatedContent);
     return NextResponse.json(updatedContent);
   } catch (error) {
     console.error("Error updating content:", error);
@@ -152,7 +150,6 @@ export async function DELETE(request: NextRequest) {
   mockContent = mockContent.filter((c) => c.id !== contentId);
 
   if (mockContent.length < initialLength) {
-    console.log("Content deleted:", contentId);
     return NextResponse.json({ message: "Content deleted successfully" });
   } else {
     return NextResponse.json(

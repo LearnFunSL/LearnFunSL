@@ -92,7 +92,6 @@ export async function POST(request: NextRequest) {
     }
 
     mockRoles.push(newRole);
-    console.log("Role created:", newRole);
     return NextResponse.json(newRole, { status: 201 });
   } catch (error) {
     console.error("Error creating role:", error);
@@ -143,7 +142,6 @@ export async function PUT(request: NextRequest) {
 
     const updatedRole = { ...mockRoles[roleIndex], ...body };
     mockRoles[roleIndex] = updatedRole;
-    console.log("Role updated:", updatedRole);
     return NextResponse.json(updatedRole);
   } catch (error) {
     console.error("Error updating role:", error);
@@ -179,7 +177,6 @@ export async function DELETE(request: NextRequest) {
   mockRoles = mockRoles.filter((r) => r.id !== roleId);
 
   if (mockRoles.length < initialLength) {
-    console.log("Role deleted:", roleId);
     // TODO: Handle users assigned to this role (e.g., reassign to a default role or restrict access)
     return NextResponse.json({ message: "Role deleted successfully" });
   } else {

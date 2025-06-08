@@ -42,7 +42,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    console.log("Platform settings updated:", platformSettings);
     // In a real scenario, persist these settings to a database or config file
     return NextResponse.json({
       message: "Settings updated successfully",

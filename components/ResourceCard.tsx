@@ -1,4 +1,3 @@
-// components/ResourceCard.tsx
 "use client";
 
 import React from "react";
@@ -95,4 +94,4 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({
       </div>
     </div>
   );
-}; // Added closing brace and semicolon for the component export
+};
