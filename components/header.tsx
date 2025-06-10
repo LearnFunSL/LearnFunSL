@@ -13,6 +13,7 @@ import {
 import { Menu, X, ChevronDown, Globe } from "lucide-react";
 import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -33,7 +34,7 @@ export function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
+    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -51,7 +52,7 @@ export function Header() {
               <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-green-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">LF</span>
               </div>
-              <span className="text-xl font-bold text-gray-900">
+              <span className="text-xl font-bold text-foreground">
                 LearnFun SL
               </span>
             </motion.div>
@@ -68,7 +69,7 @@ export function Header() {
               >
                 <Link
                   href={item.href}
-                  className={`relative group text-gray-700 transition-colors duration-200 font-medium ${pathname === item.href ? "text-blue-600 font-semibold" : "hover:text-blue-600"}`}
+                  className={`relative group text-muted-foreground transition-colors duration-200 font-medium ${pathname === item.href ? "text-primary font-semibold" : "hover:text-primary"}`}
                 >
                   {item.label}
                   <span
@@ -107,6 +108,8 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
 
+            <ThemeToggle />
+
             <SignedOut>
               <Button asChild variant="default" size="default">
                 <SignInButton mode="modal">Login</SignInButton>
@@ -138,14 +141,14 @@ export function Header() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden py-4 border-t border-gray-100"
+            className="md:hidden py-4 border-t"
           >
             <nav className="flex flex-col space-y-4">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`relative group block py-2 text-gray-700 transition-colors duration-200 font-medium ${pathname === item.href ? "text-blue-600 font-semibold" : "hover:text-blue-600"}`}
+                  className={`relative group block py-2 text-muted-foreground transition-colors duration-200 font-medium ${pathname === item.href ? "text-primary font-semibold" : "hover:text-primary"}`}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.label}
@@ -154,41 +157,46 @@ export function Header() {
                   ></span>
                 </Link>
               ))}
-              <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center space-x-1"
-                      aria-label={`Select language, current language: ${currentLanguage}`}
-                    >
-                      <Globe className="w-4 h-4" />
-                      <span className="flex-shrink-0">{currentLanguage}</span>
-                      <ChevronDown className="w-3 h-3" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start">
-                    {languages.map((lang) => (
-                      <DropdownMenuItem
-                        key={lang.code}
-                        onClick={() => setCurrentLanguage(lang.code)}
-                        className="cursor-pointer"
+              <div className="flex items-center justify-between pt-4 border-t">
+                <div className="flex items-center space-x-2">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center space-x-1"
+                        aria-label={`Select language, current language: ${currentLanguage}`}
                       >
-                        {lang.label}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                        <Globe className="w-4 h-4" />
+                        <span className="flex-shrink-0">{currentLanguage}</span>
+                        <ChevronDown className="w-3 h-3" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                      {languages.map((lang) => (
+                        <DropdownMenuItem
+                          key={lang.code}
+                          onClick={() => setCurrentLanguage(lang.code)}
+                          className="cursor-pointer"
+                        >
+                          {lang.label}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <ThemeToggle />
+                </div>
 
-                <SignedOut>
-                  <Button asChild variant="default" size="default">
-                    <SignInButton mode="modal">Login</SignInButton>
-                  </Button>
-                </SignedOut>
-                <SignedIn>
-                  <UserButton afterSignOutUrl="/" />
-                </SignedIn>
+                <div>
+                  <SignedOut>
+                    <Button asChild variant="default" size="default">
+                      <SignInButton mode="modal">Login</SignInButton>
+                    </Button>
+                  </SignedOut>
+                  <SignedIn>
+                    <UserButton afterSignOutUrl="/" />
+                  </SignedIn>
+                </div>
               </div>
             </nav>
           </motion.div>

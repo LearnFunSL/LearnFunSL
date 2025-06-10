@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 // Mock current settings - replace with actual data fetching
 const currentSettings = {
@@ -91,10 +92,12 @@ export default function SettingsPage() {
             className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-700 dark:file:text-blue-50"
           />
           {currentSettings.platformLogoUrl && (
-            <img
+            <Image
               src={currentSettings.platformLogoUrl}
               alt="Current Logo"
               className="mt-2 h-16 w-auto"
+              width={150}
+              height={64}
             />
           )}
         </div>

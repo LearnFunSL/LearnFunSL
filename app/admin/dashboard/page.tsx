@@ -96,15 +96,28 @@ export default function DashboardOverviewPage() {
         </h2>
         <ul className="divide-y divide-gray-200 dark:divide-gray-700">
           <li className="py-3 text-gray-600 dark:text-gray-400">
-            User 'john.doe' logged in.
+            User &apos;john.doe&apos; logged in.
           </li>
           <li className="py-3 text-gray-600 dark:text-gray-400">
-            New past paper 'Math Grade 10 2023' uploaded.
+            New past paper &apos;Math Grade 10 2023&apos; uploaded.
           </li>
           <li className="py-3 text-gray-600 dark:text-gray-400">
             Settings updated: Maintenance mode enabled.
           </li>
         </ul>
+      </div>
+
+      <div className="mt-8 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+        <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">
+          Account Information
+        </h2>
+        <p className="text-gray-500 dark:text-gray-400">
+          Here&apos;s a quick overview of what&apos;s happening on your
+          platform.
+        </p>
+        <div className="text-sm text-gray-500 dark:text-gray-400">
+          You&apos;re currently on the Pro Plan, which renews on July 1st, 2024.
+        </div>
       </div>
     </div>
   );

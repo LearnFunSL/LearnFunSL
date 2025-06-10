@@ -1,0 +1,123 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# 🚀 Windsurf AI IDE Rules: Vercel Deployment Success Guide
+
+## 🎯 Pre-Deployment Checklist
+
+### 1. ⚛️ React Component Best Practices
+**Fix TypeScript Prop Errors:**
+```tsx
+// ❌ WRONG - Unknown props cause build failures
+<Calendar components={{ IconLeft: ChevronLeft }} />
+
+// ✅ CORRECT - Use proper prop names
+<Calendar prevIcon={<ChevronLeft />} />
+```
+
+**Action:** Always verify component prop types before deployment.
+
+### 2. 🔄 useEffect Optimization
+**Prevent Infinite Loops:**
+```tsx
+// ❌ WRONG - Causes infinite re-renders
+const nextTestimonial = () => { /* logic */ };
+useEffect(() => { nextTestimonial(); }, [nextTestimonial]);
+
+// ✅ CORRECT - Memoized function
+const nextTestimonial = useCallback(() => { /* logic */ }, []);
+useEffect(() => { nextTestimonial(); }, [nextTestimonial]);
+```
+
+**Action:** Use `useCallback` for functions in useEffect dependencies.
+
+### 3. 🧠 Memory Management
+**Memoize Heavy Operations:**
+```tsx
+// ✅ Memoize objects
+const config = useMemo(() => ({ key: 'value' }), []);
+
+// ✅ Memoize functions
+const handler = useCallback(() => { /* logic */ }, [dependency]);
+```
+
+**Action:** Use `useMemo` and `useCallback` to prevent unnecessary re-renders.
+
+## 🛠️ Build Environment Setup
+
+### 4. 📦 Package Manager Consistency
+**Issue:** pnpm version mismatches cause deployment failures.
+
+**Solution:**
+- Ensure local pnpm version matches Vercel's
+- Use `corepack enable` for version management
+- Check `pnpm-lock.yaml` compatibility
+
+### 5. 🔒 Security Script Handling
+**Ignored Build Scripts Warning:**
+```bash
+Ignored build scripts: @clerk/shared, sharp, unrs-resolver
+```
+
+**Action:** 
+- Review ignored scripts in Vercel settings
+- Manually approve necessary build scripts
+- Verify all dependencies are production-ready
+
+### 6. 🧹 ESLint Configuration
+**Don't Silence Important Warnings:**
+```tsx
+// ❌ AVOID - Hides potential bugs
+// eslint-disable-next-line react-hooks/exhaustive-deps
+
+// ✅ BETTER - Fix the root cause
+useEffect(() => {
+  // Proper dependency management
+}, [properDependencies]);
+```
+
+**Action:** Fix ESLint warnings instead of disabling them.
+
+## 🚨 Critical Pre-Deploy Commands
+
+### Run These Before Every Deployment:
+```bash
+# 1. Type check
+npx tsc --noEmit
+
+# 2. Lint check
+npm run lint
+
+# 3. Build locally
+npm run build
+
+# 4. Test production build
+npm run start
+```
+
+## 🎯 Vercel-Specific Optimizations
+
+### Environment Variables:
+- Set `NODE_ENV=production`
+- Configure all required API keys
+- Verify environment variable names match code
+
+### Build Settings:
+- Output Directory: `dist` or `.next`
+- Install Command: Match your package manager
+- Build Command: `npm run build` or equivalent
+
+## ✅ Final Deployment Checklist
+
+- [ ] All TypeScript errors resolved
+- [ ] useEffect dependencies properly memoized
+- [ ] No ESLint warnings in production code
+- [ ] Local build completes successfully
+- [ ] Environment variables configured
+- [ ] Package manager version matches
+- [ ] Build scripts approved if needed
+
+**Remember:** A successful local build is the best predictor of successful Vercel deployment!

@@ -1,17 +1,24 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
 // Define routes that should be protected
 const isProtectedRoute = createRouteMatcher([
-  '/api/chat/gemini(.*)', // Protect the chat API. Add other API routes needing protection.
+  "/api/chat/gemini(.*)", // Protect the chat API. Add other API routes needing protection.
   // Add any other specific pages that MUST be protected at middleware level, e.g., '/settings', '/dashboard'
 ]);
 
 export default clerkMiddleware((auth, req) => {
+  // Check if protected route
   if (isProtectedRoute(req)) {
-    auth.protect(); // Call protect directly on the auth object for protected routes
+    // Protect the route - redirects to sign-in if not authenticated
+    auth.protect();
   }
-  // Routes not matched by isProtectedRoute (like '/ai-help', '/') are implicitly public here.
-  // Clerk's own /sign-in, /sign-up routes are handled automatically.
+
+  // For debugging only - not required for functionality
+  const response = NextResponse.next();
+
+  // Routes not matched by isProtectedRoute are implicitly public
+  return response;
 });
 
 export const config = {

@@ -13,10 +13,7 @@ export function FeaturesSection() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section
-      ref={ref}
-      className="py-20 bg-gradient-to-br from-gray-50 to-blue-50"
-    >
+    <section ref={ref} className="py-20 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -24,10 +21,10 @@ export function FeaturesSection() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
             Comprehensive Learning Features
           </h2>
-          <p className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
+          <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
             Everything you need for academic success, from past papers to
             AI-powered assistance, all in one comprehensive platform.
           </p>
@@ -40,7 +37,7 @@ export function FeaturesSection() {
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.6, delay: index * 0.05 }}
-              className={`bg-white rounded-lg p-4 sm:p-6 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border-l-4 ${
+              className={`bg-card rounded-lg p-4 sm:p-6 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border-l-4 ${
                 feature.status === "available"
                   ? "border-green-500"
                   : "border-orange-500"
@@ -65,10 +62,10 @@ export function FeaturesSection() {
                 </span>
               </div>
 
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <h3 className="text-lg font-semibold text-foreground mb-2">
                 {feature.title}
               </h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
+              <p className="text-muted-foreground text-sm leading-relaxed">
                 {feature.description}
               </p>
             </motion.div>
@@ -82,7 +79,7 @@ export function FeaturesSection() {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="mt-16 text-center"
           >
-            <div className="bg-gradient-to-r from-blue-600 to-green-600 rounded-lg p-8 text-white">
+            <div className="bg-gradient-to-r from-primary to-green-600 rounded-lg p-8 text-primary-foreground">
               <h3 className="text-2xl font-bold mb-4">
                 Ready to Transform Your Learning Experience?
               </h3>
@@ -98,7 +95,7 @@ export function FeaturesSection() {
                 <Button
                   asChild
                   size="lg"
-                  className="bg-white text-blue-600 px-8 py-3 font-semibold hover:bg-gray-100 transition-colors duration-300"
+                  className="bg-primary-foreground text-primary px-8 py-3 font-semibold hover:bg-gray-100 transition-colors duration-300"
                 >
                   <SignInButton mode="modal">
                     Get Started Today - It&apos;s Free!

@@ -15,6 +15,8 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { ScrollToTopButton } from "@/components/ui/scroll-to-top-button";
 import { PageTransitionWrapper } from "@/components/page-transition-wrapper";
+import { SupabaseAuthProvider } from "@/components/providers/supabase-auth-provider";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -46,7 +48,7 @@ export const metadata: Metadata = {
     title: "LearnFun SL - Empowering Sri Lankan Students",
     description:
       "Free educational resources and AI-powered learning tools for Sri Lankan students.",
-    images: ["[YOUR_DOMAIN_HERE]/twitter-default.png"], // Replace with your actual Twitter card image URL
+    images: ["http://learnfunsl.vercel.app/twitter-default.png"], // Replaced placeholder
   },
   robots: {
     index: true,
@@ -81,19 +83,31 @@ export default function RootLayout({
         },
       }}
     >
-      <html lang="en" suppressHydrationWarning={true}>
-        <body className={`${inter.className} flex flex-col min-h-screen`}>
-          <Header />
-          <PageTransitionWrapper>
-            <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-              {children}
-            </main>
-          </PageTransitionWrapper>
-          <Footer />
-          <ScrollToTopButton />
-          <SpeedInsights />
-        </body>
-      </html>
+      <SupabaseAuthProvider>
+        <html lang="en" suppressHydrationWarning>
+          <body
+            className={`${inter.className} flex flex-col min-h-screen`}
+            suppressHydrationWarning
+          >
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <Header />
+              <PageTransitionWrapper>
+                <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                  {children}
+                </main>
+              </PageTransitionWrapper>
+              <Footer />
+              <ScrollToTopButton />
+              <SpeedInsights />
+            </ThemeProvider>
+          </body>
+        </html>
+      </SupabaseAuthProvider>
     </ClerkProvider>
   );
 }
