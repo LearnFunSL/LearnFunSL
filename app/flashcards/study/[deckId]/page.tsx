@@ -1,6 +1,7 @@
-import { createClient } from "../../../lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
-import StudySession from "../../../components/flashcards/study-session";
+import StudySession from "@/components/flashcards/study-session";
 
 interface StudyPageProps {
   params: Promise<{
@@ -9,7 +10,8 @@ interface StudyPageProps {
 }
 
 export default async function StudyPage({ params }: StudyPageProps) {
-  const supabase = await createClient();
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
   const { deckId } = await params;
 
   const { data: deck } = await supabase

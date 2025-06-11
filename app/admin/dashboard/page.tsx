@@ -96,10 +96,10 @@ export default function DashboardOverviewPage() {
         </h2>
         <ul className="divide-y divide-gray-200 dark:divide-gray-700">
           <li className="py-3 text-gray-600 dark:text-gray-400">
-            User 'john.doe' logged in.
+            User &apos;john.doe&apos; logged in.
           </li>
           <li className="py-3 text-gray-600 dark:text-gray-400">
-            New past paper 'Math Grade 10 2023' uploaded.
+            New past paper &apos;Math Grade 10 2023&apos; uploaded.
           </li>
           <li className="py-3 text-gray-600 dark:text-gray-400">
             Settings updated: Maintenance mode enabled.

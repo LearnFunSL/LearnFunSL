@@ -1,11 +1,13 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 /**
  * Specify your server-side environment variables schema here.
  * This way you can ensure the app isn't built with invalid env vars.
  */
 const serverSchema = z.object({
-  NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+  NODE_ENV: z
+    .enum(["development", "test", "production"])
+    .default("development"),
   SUPABASE_URL: z.string().url(),
   SUPABASE_ANON_KEY: z.string().min(1),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
@@ -28,10 +30,12 @@ const serverSchema = z.object({
 const clientSchema = z.object({
   NEXT_PUBLIC_APP_URL: z.string().url(),
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
-  NEXT_PUBLIC_CLERK_SIGN_IN_URL: z.string().min(1),
-  NEXT_PUBLIC_CLERK_SIGN_UP_URL: z.string().min(1),
-  NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: z.string().min(1),
-  NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: z.string().min(1),
+  NEXT_PUBLIC_CLERK_SIGN_IN_URL: z.string().min(1).default("/sso-callback"),
+  NEXT_PUBLIC_CLERK_SIGN_UP_URL: z.string().min(1).default("/sso-callback"),
+  NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: z.string().min(1).default("/"),
+  NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: z.string().min(1).default("/"),
+  NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
   NEXT_PUBLIC_POSTHOG_KEY: z.string().optional(), // Optional if not using PostHog
   NEXT_PUBLIC_POSTHOG_HOST: z.string().url().optional(), // Optional
 });
@@ -56,11 +60,16 @@ const processEnv = {
   GOOGLE_DRIVE_API_KEY: process.env.GOOGLE_DRIVE_API_KEY,
   GOOGLE_DRIVE_FOLDER_ID: process.env.GOOGLE_DRIVE_FOLDER_ID,
   NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
-  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
+    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
   NEXT_PUBLIC_CLERK_SIGN_IN_URL: process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL,
   NEXT_PUBLIC_CLERK_SIGN_UP_URL: process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL,
-  NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL,
-  NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL,
+  NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL:
+    process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL,
+  NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL:
+    process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL,
+  NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
   NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
 };
@@ -78,10 +87,10 @@ if (!!process.env.SKIP_ENV_VALIDATION == false) {
 
   if (parsed.success === false) {
     console.error(
-      '❌ Invalid environment variables:',
+      "❌ Invalid environment variables:",
       parsed.error.flatten().fieldErrors,
     );
-    throw new Error('Invalid environment variables');
+    throw new Error("Invalid environment variables");
   }
 
   env = parsed.data;
@@ -90,6 +99,5 @@ if (!!process.env.SKIP_ENV_VALIDATION == false) {
   // This is not ideal, ensure Vercel has all env vars set
   env = processEnv as MergedOutput;
 }
-
 
 export { env };
