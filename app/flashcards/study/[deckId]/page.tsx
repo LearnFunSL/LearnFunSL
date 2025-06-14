@@ -1,14 +1,16 @@
-"use client";
-
-import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useDeck } from "@/hooks/queries";
 import StudyMode from "@/components/flashcards/StudyMode";
 import { Loader2 } from "lucide-react";
 
-export default function StudyPage() {
-  const params = useParams();
-  const { deckId } = params as { deckId: string };
+interface StudyPageProps {
+  params: {
+    deckId: string;
+  };
+}
+
+export default function StudyPage({ params }: StudyPageProps) {
+  const { deckId } = params;
 
   const { data: deck, isLoading, isError } = useDeck(deckId);
 
