@@ -41,7 +41,9 @@ export function useDatabaseService() {
     const supabase = await getAuthenticatedClient();
     const { data: decks, error } = await supabase
       .from("decks")
-      .select("*, flashcards!left(id), study_sessions(*)")
+      .select(
+        "*, flashcards!left(id, correct_count, incorrect_count), study_sessions(*)",
+      )
       .eq("user_id", user.id)
       .eq("is_archived", false)
       .order("updated_at", { ascending: false });
