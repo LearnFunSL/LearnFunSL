@@ -15,9 +15,9 @@ const serverSchema = z.object({
   GEMINI_API_KEY_1: z.string().min(1).optional(), // Optional if using single key or other rotation
   GEMINI_API_KEY_2: z.string().min(1).optional(), // Optional
   // GEMINI_API_KEY: z.string().min(1).optional(), // Alternative single key
-  PINECONE_API_KEY: z.string().min(1),
-  PINECONE_ENVIRONMENT: z.string().min(1),
-  PINECONE_INDEX_NAME: z.string().min(1),
+  PINECONE_API_KEY: z.string().min(1).optional(),
+  PINECONE_ENVIRONMENT: z.string().min(1).optional(),
+  PINECONE_INDEX_NAME: z.string().min(1).optional(),
   GOOGLE_DRIVE_API_KEY: z.string().optional(),
   GOOGLE_DRIVE_FOLDER_ID: z.string().optional(),
 });
@@ -82,7 +82,10 @@ type MergedSafeParseReturn = z.SafeParseReturnType<MergedInput, MergedOutput>;
 
 let env: MergedOutput;
 
-if (!!process.env.SKIP_ENV_VALIDATION == false) {
+if (
+  typeof window === "undefined" &&
+  !!process.env.SKIP_ENV_VALIDATION == false
+) {
   const parsed: MergedSafeParseReturn = merged.safeParse(processEnv);
 
   if (parsed.success === false) {
@@ -95,8 +98,7 @@ if (!!process.env.SKIP_ENV_VALIDATION == false) {
 
   env = parsed.data;
 } else {
-  // Fallback for Vercel build if SKIP_ENV_VALIDATION is set
-  // This is not ideal, ensure Vercel has all env vars set
+  // On the client, we skip validation and trust that the environment variables are set correctly.
   env = processEnv as MergedOutput;
 }
 

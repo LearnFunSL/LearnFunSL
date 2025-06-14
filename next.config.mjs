@@ -34,6 +34,9 @@ const nextConfig = {
       },
     ];
   },
+  experimental: {
+    // Empty experimental section
+  },
   // output: 'standalone', // Optional: for potentially smaller Vercel deployments
 }
 

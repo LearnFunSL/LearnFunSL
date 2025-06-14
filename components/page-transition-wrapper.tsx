@@ -19,14 +19,16 @@ export function PageTransitionWrapper({
   }
 
   return (
-    <AnimatePresence initial={false} mode="wait">
+    <AnimatePresence mode="wait">
       <motion.div
         key={pathname}
-        className="content-initially-hidden" // Apply class for initial hiding via CSS
-        initial={{ opacity: 0 }} // Tell Framer Motion the starting point for its animation logic
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.5 }}
+        initial={{ opacity: 0.95, y: 5 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0.95, y: 5 }}
+        transition={{
+          duration: 0.2,
+          ease: "easeOut",
+        }}
       >
         {children}
       </motion.div>

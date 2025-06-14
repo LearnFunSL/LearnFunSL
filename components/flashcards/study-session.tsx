@@ -12,8 +12,8 @@ interface Deck {
 
 interface Flashcard {
   id: string;
-  question: string;
-  answer: string;
+  front: string;
+  back: string;
   // Add other flashcard properties as needed
 }
 
@@ -69,12 +69,12 @@ export default function StudySession({ deck, onClose }: StudySessionProps) {
         >
           {/* Front of the card */}
           <div className="absolute w-full h-full flex items-center justify-center p-4">
-            <p className="text-xl">{currentCard.question}</p>
+            <p className="text-xl">{currentCard.front}</p>
           </div>
 
           {/* Back of the card */}
           <div className="absolute w-full h-full flex items-center justify-center p-4 bg-gray-100 rotate-y-180">
-            <p className="text-xl">{currentCard.answer}</p>
+            <p className="text-xl">{currentCard.back}</p>
           </div>
         </div>
       </div>

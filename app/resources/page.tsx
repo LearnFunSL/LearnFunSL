@@ -367,7 +367,7 @@ export default function ResourcesPage() {
                 <div>
                   <label
                     htmlFor="grade-filter"
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                   >
                     Grade
                   </label>
@@ -393,7 +393,7 @@ export default function ResourcesPage() {
                 <div>
                   <label
                     htmlFor="year-filter"
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                   >
                     Year
                   </label>
@@ -413,7 +413,7 @@ export default function ResourcesPage() {
                 <div>
                   <label
                     htmlFor="term-filter"
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                   >
                     Term
                   </label>
@@ -436,7 +436,7 @@ export default function ResourcesPage() {
                 <div>
                   <label
                     htmlFor="type-filter"
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                   >
                     Type
                   </label>
@@ -466,7 +466,7 @@ export default function ResourcesPage() {
               {grades.map((grade) => (
                 <Card
                   key={grade}
-                  className="hover:shadow-md transition-shadow cursor-pointer"
+                  className="hover:shadow-md transition-shadow cursor-pointer bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
                   onClick={() => {
                     const gradeValue = grade.toLowerCase().replace(" ", "-");
                     setGradeForSubjectView(gradeValue);
@@ -474,8 +474,10 @@ export default function ResourcesPage() {
                   }}
                 >
                   <CardContent className="flex flex-col items-center justify-center p-8">
-                    <BookOpen className="h-12 w-12 text-primary mb-3" />
-                    <p className="text-lg font-medium text-center">{grade}</p>
+                    <BookOpen className="h-12 w-12 text-primary dark:text-blue-400 mb-3" />
+                    <p className="text-lg font-medium text-center text-gray-800 dark:text-gray-200">
+                      {grade}
+                    </p>
                   </CardContent>
                 </Card>
               ))}
@@ -565,7 +567,7 @@ export default function ResourcesPage() {
           >
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Grades
           </Button>
-          <h2 className="text-3xl font-bold mb-8 text-center">
+          <h2 className="text-3xl font-bold mb-8 text-center text-gray-900 dark:text-white">
             {gradeForSubjectView
               .replace(/-/g, " ")
               .replace(/\b\w/g, (l) => l.toUpperCase())}{" "}
@@ -581,7 +583,7 @@ export default function ResourcesPage() {
           {(gradeForSubjectView === "grade-12" ||
             gradeForSubjectView === "grade-13") &&
           gradeStreamSubjects[gradeForSubjectView] ? (
-            <div className="bg-blue-100 p-4 md:p-6 rounded-lg shadow-lg">
+            <div className="bg-blue-100 dark:bg-slate-800 p-4 md:p-6 rounded-lg shadow-lg">
               {(
                 Object.keys(
                   gradeStreamSubjects[gradeForSubjectView ?? ""],
@@ -592,14 +594,14 @@ export default function ResourcesPage() {
                 if (!streamSubjects || streamSubjects.length === 0) return null;
                 return (
                   <div key={streamName} className="mb-8">
-                    <h3 className="text-xl font-semibold text-primary mb-4 border-b-2 border-blue-300 pb-2">
+                    <h3 className="text-xl font-semibold text-primary dark:text-blue-300 mb-4 border-b-2 border-blue-300 dark:border-blue-700 pb-2">
                       {streamName}
                     </h3>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                       {streamSubjects.map((subject) => (
                         <Card
                           key={subject}
-                          className={`hover:shadow-xl transition-all duration-200 ease-in-out cursor-pointer rounded-lg bg-white ${selectedSubject === subject ? "ring-2 ring-primary-dark shadow-2xl" : "border border-gray-300"}`}
+                          className={`hover:shadow-md transition-shadow cursor-pointer rounded-lg bg-white dark:bg-slate-700 ${selectedSubject === subject ? "ring-2 ring-primary-dark dark:ring-blue-400 shadow-2xl" : "border border-gray-300 dark:border-slate-600"}`}
                           onClick={() => {
                             setSubjectForTypeView(subject);
                             setCurrentView("selectTypeForSubjectView");
@@ -607,8 +609,8 @@ export default function ResourcesPage() {
                           }}
                         >
                           <CardContent className="flex flex-col items-center justify-center p-3 text-center h-full aspect-[3/2]">
-                            <Tag className="h-6 w-6 text-blue-700 mb-2" />
-                            <p className="text-xs sm:text-sm font-medium text-gray-800">
+                            <Tag className="h-6 w-6 text-blue-700 dark:text-blue-400 mb-2" />
+                            <p className="text-xs sm:text-sm font-medium text-gray-800 dark:text-gray-200">
                               {subject}
                             </p>
                           </CardContent>
@@ -623,7 +625,7 @@ export default function ResourcesPage() {
           (gradeForSubjectView === "grade-10" ||
               gradeForSubjectView === "grade-11") &&
             gradePastPaperSubjects[gradeForSubjectView] ? (
-            <div className="bg-blue-50 p-4 md:p-6 rounded-lg shadow">
+            <div className="bg-blue-50 dark:bg-slate-800 p-4 md:p-6 rounded-lg shadow">
               {(
                 Object.keys(
                   gradePastPaperSubjects[gradeForSubjectView ?? ""],
@@ -642,14 +644,14 @@ export default function ResourcesPage() {
 
                 return (
                   <div key={groupKey} className="mb-8">
-                    <h3 className="text-xl font-semibold text-primary mb-4 border-b-2 border-blue-200 pb-2">
+                    <h3 className="text-xl font-semibold text-primary dark:text-blue-300 mb-4 border-b-2 border-blue-200 dark:border-blue-700 pb-2">
                       {groupTitles[groupKey]}
                     </h3>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                       {groupSubjects.map((subject) => (
                         <Card
                           key={subject}
-                          className={`hover:shadow-lg transition-all duration-200 ease-in-out cursor-pointer rounded-lg bg-white ${selectedSubject === subject ? "ring-2 ring-primary shadow-xl" : "border border-gray-200"}`}
+                          className={`hover:shadow-md transition-shadow cursor-pointer rounded-lg bg-white dark:bg-slate-700 ${selectedSubject === subject ? "ring-2 ring-primary dark:ring-blue-400 shadow-xl" : "border border-gray-200 dark:border-slate-600"}`}
                           onClick={() => {
                             setSubjectForTypeView(subject);
                             setCurrentView("selectTypeForSubjectView");
@@ -658,8 +660,8 @@ export default function ResourcesPage() {
                         >
                           <CardContent className="flex flex-col items-center justify-center p-3 text-center h-full aspect-[3/2]">
                             {/* Icon can be dynamic based on subject or group if needed */}
-                            <Tag className="h-6 w-6 text-blue-600 mb-2" />
-                            <p className="text-xs sm:text-sm font-medium text-gray-700">
+                            <Tag className="h-6 w-6 text-blue-600 dark:text-blue-400 mb-2" />
+                            <p className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
                               {subject}
                             </p>
                           </CardContent>
@@ -676,7 +678,7 @@ export default function ResourcesPage() {
               {subjectsToDisplay.map((subject) => (
                 <Card
                   key={subject}
-                  className={`hover:shadow-md transition-shadow cursor-pointer rounded-lg ${selectedSubject === subject ? "ring-2 ring-primary shadow-lg" : "border"}`}
+                  className={`hover:shadow-md transition-shadow cursor-pointer rounded-lg bg-white dark:bg-gray-800 ${selectedSubject === subject ? "ring-2 ring-primary shadow-lg" : "border border-gray-200 dark:border-gray-700"}`}
                   onClick={() => {
                     setSubjectForTypeView(subject);
                     setCurrentView("selectTypeForSubjectView");
@@ -684,14 +686,16 @@ export default function ResourcesPage() {
                   }}
                 >
                   <CardContent className="flex flex-col items-center justify-center p-4 text-center h-full">
-                    <Tag className="h-8 w-8 text-primary mb-2" />
-                    <p className="text-sm font-medium">{subject}</p>
+                    <Tag className="h-8 w-8 text-primary dark:text-blue-400 mb-2" />
+                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                      {subject}
+                    </p>
                   </CardContent>
                 </Card>
               ))}
             </div>
           ) : (
-            <p className="text-center text-gray-500">
+            <p className="text-center text-gray-500 dark:text-gray-400">
               No subjects available for this selection. Ensure appropriate type
               is implicitly handled or allow type selection for this grade.
             </p>
@@ -702,7 +706,7 @@ export default function ResourcesPage() {
       {currentView === "selectTypeForSubjectView" &&
         gradeForSubjectView &&
         subjectForTypeView && (
-          <section>
+          <section className="bg-gradient-to-br from-slate-50 to-sky-50 dark:from-gray-900 dark:to-gray-800 p-8 rounded-lg shadow-lg">
             <Button
               variant="outline"
               onClick={() => {
@@ -711,26 +715,73 @@ export default function ResourcesPage() {
                 setSelectedTypeForSubject(""); // Clear the selected type
                 // subjectsToDisplay for selectSubjectView will repopulate via useEffect
               }}
-              className="mb-6"
+              className="mb-6 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               <ArrowLeft className="mr-2 h-4 w-4" /> Back to Subjects
             </Button>
-            <h2 className="text-3xl font-bold mb-8 text-center">
+            <h2 className="text-3xl font-bold mb-8 text-center text-gray-900 dark:text-white">
               {`${gradeForSubjectView
                 .replace(/-/g, " ")
                 .replace(/\b\w/g, (l) =>
                   l.toUpperCase(),
                 )} - ${subjectForTypeView}`}
-              {selectedTypeForSubject
-                ? ` - ${selectedTypeForSubject
-                    .replace(/-/g, " ")
-                    .replace(/\b\w/g, (l) => l.toUpperCase())}`
-                : " - Select Type"}
             </h2>
-            {selectedTypeForSubject ? (
-              <div className="mt-8">
-                {" "}
-                {/* Main container for resource display. Ensure no other titles here. */}
+
+            {!selectedTypeForSubject ? (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
+                {types.map((type) => (
+                  <Card
+                    key={type}
+                    className={`cursor-pointer transition-all duration-150 ease-out ${
+                      selectedTypeForSubject === type
+                        ? "ring-2 ring-blue-500 shadow-md scale-102"
+                        : "hover:shadow-md hover:scale-101"
+                    } bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700`}
+                    onClick={() => {
+                      setSelectedTypeForSubject(type);
+                      // Apply the type filter
+                    }}
+                  >
+                    <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+                      {type === "Past Paper" ? (
+                        <FileText className="h-12 w-12 text-blue-600 dark:text-blue-400 mb-3" />
+                      ) : type === "Textbook" ? (
+                        <BookMarked className="h-12 w-12 text-green-600 dark:text-green-400 mb-3" />
+                      ) : (
+                        <Layers className="h-12 w-12 text-amber-600 dark:text-amber-400 mb-3" />
+                      )}
+                      <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-1">
+                        {type}
+                      </h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {type === "Past Paper"
+                          ? "Exam papers and model papers"
+                          : type === "Textbook"
+                            ? "Official curriculum textbooks"
+                            : "Additional learning materials"}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <section className="mt-10">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-2xl font-semibold text-center text-gray-900 dark:text-white">
+                    {`${gradeForSubjectView
+                      .replace(/-/g, " ")
+                      .replace(/\b\w/g, (l) =>
+                        l.toUpperCase(),
+                      )} - ${subjectForTypeView} - ${selectedTypeForSubject}`}
+                  </h3>
+                  <Button
+                    variant="outline"
+                    onClick={() => setSelectedTypeForSubject("")}
+                    className="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <ArrowLeft className="mr-2 h-4 w-4" /> Back to Types
+                  </Button>
+                </div>
                 {isLoadingResources ? (
                   <div className="flex justify-center items-center py-10">
                     <Loader2 className="w-12 h-12 animate-spin text-primary" />
@@ -746,53 +797,31 @@ export default function ResourcesPage() {
                   </div>
                 ) : (
                   <p className="text-center text-gray-500 dark:text-gray-400 py-10">
-                    No resources found matching your criteria. Try adjusting
-                    your selections or search query.
+                    No resources found for this selection.
                   </p>
                 )}
-                <div className="text-center mt-8">
-                  <Button
-                    variant="secondary"
-                    onClick={() => setSelectedTypeForSubject("")}
-                  >
-                    Select a different Type
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg mx-auto">
-                {types.map(
-                  (
-                    type, // Assuming 'types' is your array: ["Past Paper", "Textbook", "other"]
-                  ) => (
-                    <Card
-                      key={type}
-                      className={`hover:shadow-md transition-shadow cursor-pointer rounded-lg ${selectedTypeForSubject === type ? "ring-2 ring-primary shadow-lg" : "border"}`}
-                      onClick={() => setSelectedTypeForSubject(type)}
-                    >
-                      <CardContent className="flex flex-col items-center justify-center p-6 text-center h-full">
-                        {type.toLowerCase() === "textbook" && (
-                          <BookMarked className="h-10 w-10 text-primary mb-3" />
-                        )}
-                        {type.toLowerCase() === "past paper" && (
-                          <FileText className="h-10 w-10 text-primary mb-3" />
-                        )}
-                        {type.toLowerCase() === "other" && (
-                          <List className="h-10 w-10 text-primary mb-3" />
-                        )}
-                        <p className="text-md font-medium">
-                          {type
-                            .replace(/-/g, " ")
-                            .replace(/\b\w/g, (l) => l.toUpperCase())}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  ),
-                )}
-              </div>
+              </section>
             )}
           </section>
         )}
+
+      {/* Clear Filters Button */}
+      {(selectedGrade ||
+        selectedYear ||
+        selectedTerm ||
+        selectedType ||
+        selectedSubject) && (
+        <div className="flex justify-center mt-8">
+          <Button
+            variant="outline"
+            onClick={handleClearFilters}
+            className="flex items-center"
+          >
+            <List className="mr-2 h-4 w-4" />
+            Clear All Filters
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

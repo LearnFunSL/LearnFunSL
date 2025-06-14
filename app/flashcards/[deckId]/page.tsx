@@ -1,8 +1,9 @@
-export default function DeckPage() {
-  return (
-    <div>
-      <h1>Deck Page</h1>
-      <p>This is a placeholder page for a single deck.</p>
-    </div>
-  );
+import DeckEditor from "@/components/flashcards/DeckEditor";
+
+export default function EditDeckPage({
+  params,
+}: {
+  params: { deckId: string };
+}) {
+  return <DeckEditor deckId={params.deckId} />;
 }
