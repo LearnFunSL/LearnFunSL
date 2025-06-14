@@ -35,7 +35,10 @@ export const config: EnvConfig = {
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: getEnvVar(
     "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
   ),
-  CLERK_SECRET_KEY: getEnvVar("CLERK_SECRET_KEY"),
+  CLERK_SECRET_KEY: getEnvVar(
+    "CLERK_SECRET_KEY",
+    "dummy-clerk-secret-for-build",
+  ),
   NEXT_PUBLIC_CLERK_SIGN_IN_URL: getEnvVar(
     "NEXT_PUBLIC_CLERK_SIGN_IN_URL",
     "/sign-in",
@@ -56,6 +59,12 @@ export const config: EnvConfig = {
   // Supabase
   NEXT_PUBLIC_SUPABASE_URL: getEnvVar("NEXT_PUBLIC_SUPABASE_URL"),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: getEnvVar("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
-  SUPABASE_SERVICE_ROLE_KEY: getEnvVar("SUPABASE_SERVICE_ROLE_KEY"),
-  SUPABASE_JWT_SECRET: getEnvVar("SUPABASE_JWT_SECRET"),
+  SUPABASE_SERVICE_ROLE_KEY: getEnvVar(
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "dummy-supabase-service-role-for-build",
+  ),
+  SUPABASE_JWT_SECRET: getEnvVar(
+    "SUPABASE_JWT_SECRET",
+    "dummy-supabase-jwt-secret-for-build",
+  ),
 };
