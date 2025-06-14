@@ -15,10 +15,19 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { ScrollToTopButton } from "@/components/ui/scroll-to-top-button";
 import { PageTransitionWrapper } from "@/components/page-transition-wrapper";
+import QueryProvider from "@/components/QueryProvider";
+import { cn } from "@/lib/utils";
+import { fontSans } from "@/lib/fonts";
+import { ThemeProvider } from "@/components/ui/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
+import { NewUserModalManager } from "@/components/common/NewUserModalManager";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  ),
   title:
     "LearnFun SL - Empowering Sri Lankan Students with Modern Learning Tools",
   description:
@@ -34,7 +43,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     images: [
       {
-        url: "http://learnfunsl.vercel.app/og-default.png", // Replace with your actual OG image URL
+        url: "/og-default.png",
         width: 1200,
         height: 630,
         alt: "LearnFun SL - Empowering Sri Lankan Students",
@@ -46,7 +55,7 @@ export const metadata: Metadata = {
     title: "LearnFun SL - Empowering Sri Lankan Students",
     description:
       "Free educational resources and AI-powered learning tools for Sri Lankan students.",
-    images: ["[YOUR_DOMAIN_HERE]/twitter-default.png"], // Replace with your actual Twitter card image URL
+    images: ["/twitter-default.png"],
   },
   robots: {
     index: true,
@@ -81,17 +90,32 @@ export default function RootLayout({
         },
       }}
     >
-      <html lang="en" suppressHydrationWarning={true}>
-        <body className={`${inter.className} flex flex-col min-h-screen`}>
-          <Header />
-          <PageTransitionWrapper>
-            <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-              {children}
-            </main>
-          </PageTransitionWrapper>
-          <Footer />
-          <ScrollToTopButton />
-          <SpeedInsights />
+      <html lang="en" suppressHydrationWarning>
+        <body
+          className={cn(
+            "flex flex-col min-h-screen bg-background text-foreground",
+            fontSans.className,
+          )}
+          suppressHydrationWarning
+        >
+          <QueryProvider>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+              <NewUserModalManager>
+                <div className="flex-1">
+                  <Header />
+                  <PageTransitionWrapper>
+                    <div className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                      {children}
+                    </div>
+                  </PageTransitionWrapper>
+                  <Footer />
+                  <ScrollToTopButton />
+                  <SpeedInsights />
+                </div>
+                <Toaster />
+              </NewUserModalManager>
+            </ThemeProvider>
+          </QueryProvider>
         </body>
       </html>
     </ClerkProvider>

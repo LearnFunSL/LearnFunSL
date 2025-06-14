@@ -1,5 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  webpack: (config, { isServer }) => {
+    config.ignoreWarnings = [
+      /Critical dependency: the request of a dependency is an expression/,
+    ];
+
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+      };
+    }
+    return config;
+  },
   // ESLint checks will now run during build (default is false for ignoreDuringBuilds)
   // TypeScript checks will now run during build (default is false for ignoreBuildErrors)
   images: {
@@ -33,6 +48,9 @@ const nextConfig = {
         ],
       },
     ];
+  },
+  experimental: {
+    // Empty experimental section
   },
   // output: 'standalone', // Optional: for potentially smaller Vercel deployments
 }

@@ -15,7 +15,7 @@ export function FeaturesSection() {
   return (
     <section
       ref={ref}
-      className="py-20 bg-gradient-to-br from-gray-50 to-blue-50"
+      className="py-20 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
@@ -24,10 +24,10 @@ export function FeaturesSection() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-6">
             Comprehensive Learning Features
           </h2>
-          <p className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
+          <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-3xl mx-auto">
             Everything you need for academic success, from past papers to
             AI-powered assistance, all in one comprehensive platform.
           </p>
@@ -40,7 +40,7 @@ export function FeaturesSection() {
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.6, delay: index * 0.05 }}
-              className={`bg-white rounded-lg p-4 sm:p-6 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border-l-4 ${
+              className={`bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border-l-4 ${
                 feature.status === "available"
                   ? "border-green-500"
                   : "border-orange-500"
@@ -55,8 +55,8 @@ export function FeaturesSection() {
                 <span
                   className={`text-xs px-2 py-1 rounded-full font-medium ${
                     feature.status === "available"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-orange-100 text-orange-800"
+                      ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
+                      : "bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300"
                   }`}
                 >
                   {feature.status === "available"
@@ -65,10 +65,10 @@ export function FeaturesSection() {
                 </span>
               </div>
 
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                 {feature.title}
               </h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
+              <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
                 {feature.description}
               </p>
             </motion.div>

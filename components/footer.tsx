@@ -18,9 +18,11 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { useTheme } from "next-themes";
 
 export function Footer() {
   const [currentLanguage, setCurrentLanguage] = useState("EN");
+  const { theme } = useTheme();
 
   const languages = [
     { code: "EN", label: "English" },
@@ -52,7 +54,7 @@ export function Footer() {
   ];
 
   return (
-    <footer className="bg-gray-900 text-white py-16">
+    <footer className="bg-gray-900 dark:bg-gray-800 text-white py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* About Section */}
@@ -69,13 +71,13 @@ export function Footer() {
               </div>
               <span className="text-xl font-bold">LearnFun SL</span>
             </div>
-            <p className="text-gray-300 mb-6 leading-relaxed">
+            <p className="text-gray-300 dark:text-gray-200 mb-6 leading-relaxed">
               Empowering Sri Lankan students with modern, accessible, and
               effective learning tools. Built by students, for students, to make
               education stress-free and enjoyable across Tamil, Sinhala, and
               English languages.
             </p>
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-400 dark:text-gray-300 text-sm">
               Our mission is to democratize quality education and help every
               student reach their full potential, regardless of their background
               or circumstances.
@@ -94,7 +96,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/"
-                  className="text-gray-300 hover:text-white transition-colors duration-200"
+                  className="text-gray-300 dark:text-gray-200 hover:text-white transition-colors duration-200"
                 >
                   Home
                 </Link>
@@ -102,7 +104,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/resources"
-                  className="text-gray-300 hover:text-white transition-colors duration-200"
+                  className="text-gray-300 dark:text-gray-200 hover:text-white transition-colors duration-200"
                 >
                   Resources
                 </Link>
@@ -110,7 +112,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/videos"
-                  className="text-gray-300 hover:text-white transition-colors duration-200"
+                  className="text-gray-300 dark:text-gray-200 hover:text-white transition-colors duration-200"
                 >
                   Videos
                 </Link>
@@ -118,7 +120,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/ai-help"
-                  className="text-gray-300 hover:text-white transition-colors duration-200"
+                  className="text-gray-300 dark:text-gray-200 hover:text-white transition-colors duration-200"
                 >
                   AI Help
                 </Link>
@@ -126,7 +128,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/about"
-                  className="text-gray-300 hover:text-white transition-colors duration-200"
+                  className="text-gray-300 dark:text-gray-200 hover:text-white transition-colors duration-200"
                 >
                   About Us
                 </Link>
@@ -146,7 +148,7 @@ export function Footer() {
               <li>
                 <a
                   href="mailto:eduhelpsl2025@gmail.com"
-                  className="text-gray-300 hover:text-white transition-colors duration-200 flex items-center"
+                  className="text-gray-300 dark:text-gray-200 hover:text-white transition-colors duration-200 flex items-center"
                 >
                   <Mail className="w-4 h-4 mr-2" />
                   eduhelpsl2025@gmail.com
@@ -155,7 +157,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/privacy"
-                  className="text-gray-300 hover:text-white transition-colors duration-200"
+                  className="text-gray-300 dark:text-gray-200 hover:text-white transition-colors duration-200"
                 >
                   Privacy Policy
                 </Link>
@@ -163,7 +165,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/terms"
-                  className="text-gray-300 hover:text-white transition-colors duration-200"
+                  className="text-gray-300 dark:text-gray-200 hover:text-white transition-colors duration-200"
                 >
                   Terms of Use
                 </Link>
@@ -176,7 +178,7 @@ export function Footer() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700 flex items-center space-x-1"
+                  className="bg-gray-800 dark:bg-gray-700 border-gray-700 dark:border-gray-600 text-white hover:bg-gray-700 dark:hover:bg-gray-600 flex items-center space-x-1"
                 >
                   <Globe className="w-4 h-4" />
                   <span>{currentLanguage}</span>
@@ -185,13 +187,13 @@ export function Footer() {
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="end"
-                className="bg-gray-800 border-gray-700"
+                className="bg-gray-800 dark:bg-gray-700 border-gray-700 dark:border-gray-600"
               >
                 {languages.map((lang) => (
                   <DropdownMenuItem
                     key={lang.code}
                     onClick={() => setCurrentLanguage(lang.code)}
-                    className="text-white hover:bg-gray-700 cursor-pointer"
+                    className="text-white hover:bg-gray-700 dark:hover:bg-gray-600 cursor-pointer"
                   >
                     {lang.label}
                   </DropdownMenuItem>
@@ -207,7 +209,7 @@ export function Footer() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
           viewport={{ once: true }}
-          className="border-t border-gray-800 pt-8"
+          className="border-t border-gray-800 dark:border-gray-700 pt-8"
         >
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex space-x-4 mb-4 md:mb-0">
@@ -219,7 +221,7 @@ export function Footer() {
                   {...(social.href.startsWith("mailto:")
                     ? {}
                     : { target: "_blank", rel: "noopener noreferrer" })}
-                  className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-10 h-10 bg-gray-800 dark:bg-gray-700 rounded-lg flex items-center justify-center text-gray-400 dark:text-gray-300 hover:text-white hover:bg-gray-700 dark:hover:bg-gray-600 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -229,10 +231,10 @@ export function Footer() {
             </div>
 
             <div className="text-center md:text-right">
-              <p className="text-gray-400 text-sm">
+              <p className="text-gray-400 dark:text-gray-300 text-sm">
                 © {new Date().getFullYear()} LearnFun SL. All rights reserved.
               </p>
-              <p className="text-gray-500 text-xs mt-1">
+              <p className="text-gray-500 dark:text-gray-400 text-xs mt-1">
                 Made with ❤️ for Sri Lankan students
               </p>
             </div>

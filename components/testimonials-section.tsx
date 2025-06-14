@@ -46,7 +46,7 @@ export function TestimonialsSection() {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
         key={i}
-        className={`w-4 h-4 ${i < rating ? "text-yellow-400 fill-current" : "text-gray-300"}`}
+        className={`w-4 h-4 ${i < rating ? "text-yellow-400 fill-current" : "text-gray-300 dark:text-gray-600"}`}
       />
     ));
   };
@@ -61,7 +61,7 @@ export function TestimonialsSection() {
   return (
     <section
       ref={ref}
-      className="py-16 bg-gradient-to-br from-blue-50 via-white to-green-50"
+      className="py-16 bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
@@ -70,10 +70,10 @@ export function TestimonialsSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-10"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             What Our Community Says
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             Hear from students, teachers, and parents who have experienced the
             transformative power of LearnFun SL
           </p>
@@ -112,7 +112,7 @@ export function TestimonialsSection() {
                         scale: 0.8,
                       }}
                       transition={{ duration: 0.5 }}
-                      className="absolute top-0 left-0 right-0 mx-auto w-full max-w-2xl bg-white rounded-lg p-6 shadow-lg"
+                      className="absolute top-0 left-0 right-0 mx-auto w-full max-w-2xl bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg"
                       style={{
                         transformOrigin: "center",
                         pointerEvents: position === 0 ? "auto" : "none",
@@ -133,20 +133,20 @@ export function TestimonialsSection() {
                           </div>
 
                           {/* Testimonial Text */}
-                          <blockquote className="text-gray-700 mb-4 italic text-sm sm:text-base leading-relaxed">
+                          <blockquote className="text-gray-700 dark:text-gray-300 mb-4 italic text-sm sm:text-base leading-relaxed">
                             &quot;{testimonial.text}&quot;
                           </blockquote>
 
                           {/* Author Info */}
                           <div className="flex items-center">
-                            <div className="mr-3 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 font-semibold text-sm">
+                            <div className="mr-3 w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-300 font-semibold text-sm">
                               {testimonial.author.charAt(0)}
                             </div>
                             <div>
-                              <h4 className="font-semibold text-gray-900 text-sm sm:text-base">
+                              <h4 className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base">
                                 {testimonial.author}
                               </h4>
-                              <p className="text-xs text-gray-600">
+                              <p className="text-xs text-gray-600 dark:text-gray-400">
                                 {testimonial.title}, {testimonial.affiliation}
                               </p>
                             </div>
@@ -163,7 +163,7 @@ export function TestimonialsSection() {
           {/* Navigation Arrows */}
           <button
             onClick={prevTestimonial}
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-gray-600 hover:text-blue-600 hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 bg-white dark:bg-gray-800 rounded-full shadow-lg flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             aria-label="Previous testimonial"
           >
             <ChevronLeft className="w-5 h-5" />
@@ -171,7 +171,7 @@ export function TestimonialsSection() {
 
           <button
             onClick={nextTestimonial}
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-gray-600 hover:text-blue-600 hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 z-10 w-10 h-10 bg-white dark:bg-gray-800 rounded-full shadow-lg flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             aria-label="Next testimonial"
           >
             <ChevronRight className="w-5 h-5" />
@@ -185,8 +185,8 @@ export function TestimonialsSection() {
                 onClick={() => goToTestimonial(index)}
                 className={`w-2 h-2 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   index === currentIndex
-                    ? "bg-blue-600 w-6"
-                    : "bg-gray-300 hover:bg-gray-400"
+                    ? "bg-blue-600 dark:bg-blue-400 w-6"
+                    : "bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500"
                 }`}
                 aria-label={`Go to testimonial ${index + 1}`}
               />
@@ -201,17 +201,29 @@ export function TestimonialsSection() {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-2xl mx-auto"
         >
-          <div className="text-center p-4 bg-white rounded-lg shadow">
-            <div className="text-2xl font-bold text-blue-600 mb-1">5,000+</div>
-            <div className="text-sm text-gray-600">Happy Students</div>
+          <div className="text-center p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+              5,000+
+            </div>
+            <div className="text-sm text-gray-600 dark:text-gray-300">
+              Happy Students
+            </div>
           </div>
-          <div className="text-center p-4 bg-white rounded-lg shadow">
-            <div className="text-2xl font-bold text-green-600 mb-1">4.9/5</div>
-            <div className="text-sm text-gray-600">Average Rating</div>
+          <div className="text-center p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400 mb-1">
+              4.9/5
+            </div>
+            <div className="text-sm text-gray-600 dark:text-gray-300">
+              Average Rating
+            </div>
           </div>
-          <div className="text-center p-4 bg-white rounded-lg shadow">
-            <div className="text-2xl font-bold text-purple-600 mb-1">95%</div>
-            <div className="text-sm text-gray-600">Success Rate</div>
+          <div className="text-center p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+            <div className="text-2xl font-bold text-purple-600 dark:text-purple-400 mb-1">
+              95%
+            </div>
+            <div className="text-sm text-gray-600 dark:text-gray-300">
+              Success Rate
+            </div>
           </div>
         </motion.div>
       </div>

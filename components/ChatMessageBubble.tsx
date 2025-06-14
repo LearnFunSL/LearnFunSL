@@ -1,12 +1,16 @@
 "use client";
 
-import React from "react";
+import React, { memo, useMemo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Copy, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+// Import the CSS in a layout or global CSS file instead
+// import 'katex/dist/katex.min.css';
 
 // Assuming the Message type is similar to the one in chat-interface.tsx
 // If it's defined elsewhere and exported, import it directly.
@@ -23,79 +27,104 @@ interface Message {
 }
 
 interface ChatMessageBubbleProps {
-  msg: Message;
-  userImageUrl?: string;
-  handleCopyToClipboard: (text: string, messageId: string) => void;
-  copiedMessageId?: string | null;
+  message: Message;
+  onCopy: () => void;
+  isCopied: boolean;
 }
 
+// Check if content contains math expressions
+const containsMath = (content: string): boolean => {
+  // Look for inline math $...$ or block math $$...$$
+  const inlineMathRegex = /\$[^$\n]+\$/g;
+  const blockMathRegex = /\$\$[\s\S]+?\$\$/g;
+  // Look for LaTeX commands like \frac{}{}, \div, \times
+  const latexCommandRegex = /\\(frac|div|times|cdot|sqrt|alpha|beta|sum|int)/g;
+
+  return (
+    inlineMathRegex.test(content) ||
+    blockMathRegex.test(content) ||
+    latexCommandRegex.test(content)
+  );
+};
+
+// Simple markdown rendering without math support
+const SimpleMarkdown = memo(
+  ({ content, isUser }: { content: string; isUser: boolean }) => (
+    <div
+      className={cn(
+        "prose prose-sm max-w-none",
+        isUser ? "text-white" : "dark:prose-invert",
+      )}
+    >
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+    </div>
+  ),
+);
+SimpleMarkdown.displayName = "SimpleMarkdown";
+
+// Full markdown rendering with math support (heavier)
+const MathMarkdown = memo(
+  ({ content, isUser }: { content: string; isUser: boolean }) => (
+    <div
+      className={cn(
+        "prose prose-sm max-w-none",
+        isUser ? "text-white" : "dark:prose-invert",
+      )}
+    >
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm, remarkMath]}
+        rehypePlugins={[rehypeKatex]}
+      >
+        {content}
+      </ReactMarkdown>
+    </div>
+  ),
+);
+MathMarkdown.displayName = "MathMarkdown";
+
 export function ChatMessageBubble({
-  msg,
-  userImageUrl,
-  handleCopyToClipboard,
-  copiedMessageId,
+  message,
+  onCopy,
+  isCopied,
 }: ChatMessageBubbleProps) {
-  const isUser = msg.sender === "user";
-  const isCopied = copiedMessageId === msg.id;
+  const isUser = message.sender === "user";
+
+  // Determine if message has math content (memoized)
+  const hasMath = useMemo(() => containsMath(message.text), [message.text]);
 
   return (
     <div
       className={cn(
-        "flex items-start space-x-3 py-3",
-        isUser ? "justify-end" : "justify-start",
+        "group relative rounded-lg pl-3 pr-8 py-2 max-w-[calc(100%-40px)] break-words",
+        isUser ? "bg-primary text-primary-foreground" : "bg-muted",
       )}
     >
-      {!isUser && (
-        <Avatar className="h-8 w-8 shrink-0">
-          <AvatarImage src="/learnfunsl-ai-logo.png" alt="AI Avatar" />
-          <AvatarFallback>AI</AvatarFallback>
-        </Avatar>
+      {hasMath ? (
+        <MathMarkdown content={message.text} isUser={isUser} />
+      ) : (
+        <SimpleMarkdown content={message.text} isUser={isUser} />
       )}
-      <div
+      <Button
+        variant="ghost"
+        size="icon"
         className={cn(
-          "group relative rounded-lg pl-3 pr-8 py-2 max-w-[70%] break-words", // Added pr-8 for more space on the right
-          isUser ? "bg-primary text-primary-foreground" : "bg-muted",
+          "absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity",
+          isUser
+            ? "text-primary-foreground hover:bg-primary/80"
+            : "text-muted-foreground hover:bg-muted/80",
+          isCopied && "opacity-100",
         )}
+        onClick={onCopy}
+        aria-label={isCopied ? "Copied" : "Copy message"}
       >
-        <div
-          className={cn(
-            "prose prose-sm max-w-none",
-            isUser ? "text-white" : "dark:prose-invert",
-          )}
-        >
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.text}</ReactMarkdown>
-        </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className={cn(
-            "absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity", // Changed -top-2 -right-2 to top-1 right-1
-            isUser
-              ? "text-primary-foreground hover:bg-primary/80"
-              : "text-muted-foreground hover:bg-muted/80",
-            isCopied && "opacity-100",
-          )}
-          onClick={() => handleCopyToClipboard(msg.text, msg.id)}
-          aria-label={isCopied ? "Copied" : "Copy message"}
-        >
-          {isCopied ? (
-            <Check className="h-3.5 w-3.5" />
-          ) : (
-            <Copy className="h-3.5 w-3.5" />
-          )}
-        </Button>
-      </div>
-      {isUser && userImageUrl && (
-        <Avatar className="h-8 w-8 shrink-0">
-          <AvatarImage src={userImageUrl} alt="User Avatar" />
-          <AvatarFallback>
-            {/* You might want to generate initials from user's name if available */}
-            U
-          </AvatarFallback>
-        </Avatar>
-      )}
+        {isCopied ? (
+          <Check className="h-3.5 w-3.5" />
+        ) : (
+          <Copy className="h-3.5 w-3.5" />
+        )}
+      </Button>
     </div>
   );
 }
 
-export default ChatMessageBubble;
+export default memo(ChatMessageBubble);

@@ -31,9 +31,9 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 215 28% 17%;
     --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
+    --card: 215 28% 22%;
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
@@ -57,8 +57,24 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Smooth element transitions */
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  [role="button"] {
+    @apply transition-all duration-200 ease-out;
+  }
+
+  /* Smooth theme transition */
+  html {
+    @apply transition-colors duration-200 ease-out;
   }
 }
 
@@ -66,6 +82,24 @@
   .bg-grid-pattern {
     background-image: radial-gradient(circle, #e5e7eb 1px, transparent 1px);
     background-size: 20px 20px;
+  }
+
+  /* Subtle hover effects */
+  .hover-lift {
+    @apply transition-transform duration-200 ease-out;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+
+  /* Subtle fade animations */
+  .fade-in {
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  .fade-in-up {
+    animation: fadeInUp 0.2s ease-out;
   }
 }
 
@@ -81,20 +115,27 @@ html {
   box-shadow: 0 0 0 2px var(--ring);
 }
 
-/* Custom animations */
+/* Custom animations - subtle and modern */
+@keyframes fadeIn {
+  from {
+    opacity: 0.95;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 @keyframes fadeInUp {
   from {
-    opacity: 0;
-    transform: translateY(30px);
+    opacity: 0.95;
+    transform: translateY(5px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out;
 }
 
 /* Responsive typography */
@@ -102,6 +143,7 @@ html {
   h1 {
     @apply text-3xl;
   }
+
   h2 {
     @apply text-2xl;
   }
