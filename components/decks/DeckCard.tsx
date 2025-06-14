@@ -39,7 +39,13 @@ type Deck = Database["public"]["Tables"]["decks"]["Row"];
 
 interface DeckCardProps {
   deck: Deck & {
-    flashcards: { id: string }[] | null;
+    flashcards:
+      | {
+          id: string;
+          correct_count: number;
+          incorrect_count: number;
+        }[]
+      | null;
     study_sessions:
       | { created_at: string; correct_answers: number; cards_studied: number }[]
       | null;
@@ -94,24 +100,25 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck }) => {
   const cardCount = deck.flashcards?.length || 0;
 
   const progress = useMemo(() => {
-    if (!deck.study_sessions || deck.study_sessions.length === 0) {
-      return 0;
-    }
-    const totalCorrect = deck.study_sessions.reduce(
-      (sum, session) => sum + (session.correct_answers || 0),
-      0,
-    );
-    const totalStudied = deck.study_sessions.reduce(
-      (sum, session) => sum + (session.cards_studied || 0),
-      0,
-    );
-
-    if (totalStudied === 0) {
+    if (!deck.flashcards || cardCount === 0) {
       return 0;
     }
 
-    return Math.round((totalCorrect / totalStudied) * 100);
-  }, [deck.study_sessions]);
+    const totalAttempts = deck.flashcards.reduce((sum, card) => {
+      return sum + (card.correct_count || 0) + (card.incorrect_count || 0);
+    }, 0);
+
+    if (totalAttempts === 0) {
+      return 0; // No cards have been studied yet
+    }
+
+    const totalCorrect = deck.flashcards.reduce(
+      (sum, card) => sum + (card.correct_count || 0),
+      0,
+    );
+
+    return Math.round((totalCorrect / totalAttempts) * 100);
+  }, [deck.flashcards, cardCount]);
 
   const handleDelete = async () => {
     try {

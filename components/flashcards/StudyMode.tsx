@@ -62,14 +62,22 @@ const StudyMode: React.FC<StudyModeProps> = ({ deck }) => {
   ]);
 
   const handleCorrect = useCallback(() => {
+    updateFlashcard.mutate({
+      id: cards[current].id,
+      updates: { correct_count: (cards[current].correct_count || 0) + 1 },
+    });
     setStats((prev) => ({ ...prev, correct: prev.correct + 1 }));
     nextCard();
-  }, [nextCard]);
+  }, [nextCard, updateFlashcard, cards, current]);
 
   const handleIncorrect = useCallback(() => {
+    updateFlashcard.mutate({
+      id: cards[current].id,
+      updates: { incorrect_count: (cards[current].incorrect_count || 0) + 1 },
+    });
     setStats((prev) => ({ ...prev, incorrect: prev.incorrect + 1 }));
     nextCard();
-  }, [nextCard]);
+  }, [nextCard, updateFlashcard, cards, current]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -92,7 +100,7 @@ const StudyMode: React.FC<StudyModeProps> = ({ deck }) => {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [completed, flipped, handleCorrect, handleIncorrect]);
+  }, [current, completed, flipped, handleCorrect, handleIncorrect]);
 
   const resetSession = () => {
     setCompleted(false);
