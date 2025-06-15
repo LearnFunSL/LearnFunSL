@@ -15,11 +15,25 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
  * @param data The user data from the webhook.
  */
 export const syncUserCreation = async (data: UserData) => {
+  const primaryEmail = data.email_addresses.find(
+    (email) => email.id === data.primary_email_address_id,
+  )?.email_address;
+
+  if (!primaryEmail) {
+    log.error("User creation skipped: No primary email address found.", {
+      clerkId: data.id,
+    });
+    // Depending on your business logic, you might want to throw an error
+    // or simply return. If users CAN exist without emails, you might
+    // create a profile with a null email. If not, this is a critical failure.
+    throw new Error("User creation failed: No primary email address.");
+  }
+
   for (let i = 0; i < MAX_RETRIES; i++) {
     try {
       await createUserProfile({
         clerk_id: data.id,
-        email: data.email_addresses[0]?.email_address,
+        email: primaryEmail,
         username: data.username,
         image_url: data.image_url,
         grade: null,
@@ -44,10 +58,23 @@ export const syncUserCreation = async (data: UserData) => {
  * @param data The user data from the webhook.
  */
 export const syncUserUpdate = async (data: UserData) => {
+  const primaryEmail = data.email_addresses.find(
+    (email) => email.id === data.primary_email_address_id,
+  )?.email_address;
+
+  if (!primaryEmail) {
+    log.warn("User update skipped: No primary email address found.", {
+      clerkId: data.id,
+    });
+    // If email is a required field for you, handle this appropriately.
+    // For an update, we might proceed without updating the email.
+    return;
+  }
+
   for (let i = 0; i < MAX_RETRIES; i++) {
     try {
       await updateUserProfile(data.id, {
-        email: data.email_addresses[0]?.email_address,
+        email: primaryEmail,
         username: data.username,
         image_url: data.image_url,
       });

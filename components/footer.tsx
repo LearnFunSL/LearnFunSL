@@ -127,7 +127,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/about"
+                  href="/about-us"
                   className="text-gray-300 dark:text-gray-200 hover:text-white transition-colors duration-200"
                 >
                   About Us
@@ -156,7 +156,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/privacy"
+                  href="/privacy-policy"
                   className="text-gray-300 dark:text-gray-200 hover:text-white transition-colors duration-200"
                 >
                   Privacy Policy
@@ -164,7 +164,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/terms"
+                  href="/terms-of-service"
                   className="text-gray-300 dark:text-gray-200 hover:text-white transition-colors duration-200"
                 >
                   Terms of Use

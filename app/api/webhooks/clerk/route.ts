@@ -52,6 +52,12 @@ async function handler(req: NextRequest) {
     });
   }
 
+  // Log the sanitized event payload
+  log.info("Received Clerk webhook", {
+    eventType: evt.type,
+    clerkId: evt.data.id,
+  });
+
   const eventType = evt.type as EventType;
 
   try {
