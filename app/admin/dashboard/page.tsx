@@ -1,4 +1,6 @@
 import React from "react";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import UploadForm from "./UploadForm";
 // import { Users, FileText, BarChart2, AlertTriangle } from 'lucide-react'; // Example icons
 
 // Placeholder data for analytics cards
@@ -59,7 +61,14 @@ const AnalyticsCard: React.FC<AnalyticsCardProps> = ({
   );
 };
 
-export default function DashboardOverviewPage() {
+export default async function DashboardOverviewPage() {
+  const supabase = createSupabaseServerClient();
+  const { data: users, error } = await supabase.from("users").select("email");
+
+  if (error) {
+    console.error("Error fetching users:", error);
+  }
+
   return (
     <div>
       <h1 className="text-3xl font-bold mb-8 text-gray-800 dark:text-white">
@@ -92,19 +101,39 @@ export default function DashboardOverviewPage() {
 
       <div className="mt-8 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
         <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">
-          Recent Activity (Placeholder)
+          Recent Users
         </h2>
         <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-          <li className="py-3 text-gray-600 dark:text-gray-400">
-            User &apos;john.doe&apos; logged in.
-          </li>
-          <li className="py-3 text-gray-600 dark:text-gray-400">
-            New past paper &apos;Math Grade 10 2023&apos; uploaded.
-          </li>
-          <li className="py-3 text-gray-600 dark:text-gray-400">
-            Settings updated: Maintenance mode enabled.
-          </li>
+          {users && users.length > 0 ? (
+            users.map((user: { email: string | null }, index: number) => (
+              <li key={index} className="py-3 text-gray-600 dark:text-gray-400">
+                {user.email}
+              </li>
+            ))
+          ) : (
+            <li className="py-3 text-gray-600 dark:text-gray-400">
+              No recent users found.
+            </li>
+          )}
         </ul>
+      </div>
+
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">
+          Add New Resource
+        </h2>
+        <UploadForm />
+      </div>
+
+      <div className="mt-8 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+        <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">
+          Recent Uploads
+        </h2>
+        <div className="h-64 flex items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-md">
+          <p className="text-gray-400 dark:text-gray-500">
+            Recent uploads will appear here.
+          </p>
+        </div>
       </div>
     </div>
   );

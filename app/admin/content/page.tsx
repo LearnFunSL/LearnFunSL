@@ -227,7 +227,7 @@ export default function ContentManagementPage() {
                   {item.medium}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                  {new Date(item.created_at).toLocaleDateString()}
+                  {new Date(item.created_at).toLocaleDateString("en-GB")}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                   <button className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">

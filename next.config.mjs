@@ -1,3 +1,5 @@
+import withBundleAnalyzer from "@next/bundle-analyzer";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   webpack: (config, { isServer }) => {
@@ -23,6 +25,18 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'lh3.googleusercontent.com',
+      },
+      {
+        protocol: "https",
+        hostname: "img.clerk.com",
+        port: "",
+        pathname: "/private/**",
+      },
+      {
+        protocol: "https",
+        hostname: "i.ytimg.com",
+        port: "",
+        pathname: "/vi/**",
       },
       // Add other remote image domains if needed in the future
     ],
@@ -50,9 +64,13 @@ const nextConfig = {
     ];
   },
   experimental: {
-    // Empty experimental section
+    // ppr: true, // This requires a canary build of Next.js
   },
   // output: 'standalone', // Optional: for potentially smaller Vercel deployments
 }
 
-export default nextConfig
+const bundleAnalyzer = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+});
+
+export default bundleAnalyzer(nextConfig);
