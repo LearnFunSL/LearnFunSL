@@ -2,17 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  BookOpen,
-  ArrowLeft,
-  Tag,
-  Layers,
-  BookMarked,
-  FileText,
-  List,
-  Video as VideoIcon, // Renamed to avoid conflict with HTMLVideoElement
-} from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { ArrowLeft, Video as VideoIcon, Clock } from "lucide-react";
 import {
   GroupedSubjects,
   StreamedSubjects,
@@ -20,6 +11,8 @@ import {
   gradeStreamSubjects,
   gradeTextbookSubjects,
 } from "@/lib/subject-data";
+import { videos as videoData } from "@/lib/videos-data";
+import Image from "next/image";
 
 const grades = Array.from({ length: 13 }, (_, i) => `Grade ${i + 1}`);
 
@@ -174,12 +167,15 @@ export default function VideosPage() {
                       if (groupName === "compulsory")
                         return "Compulsory Subjects";
                       if (groupName.startsWith("optionalGroup"))
-                        return `Group ${groupName.replace("optionalGroup", "")} Basket`;
+                        return `Group ${groupName.replace(
+                          "optionalGroup",
+                          "",
+                        )} Basket`;
                       return groupName; // Fallback
                     })()}
                   </h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                    {subjectsInGroup.map((subject: string) =>
+                    {(subjectsInGroup as string[]).map((subject: string) =>
                       renderSubjectCard(subject),
                     )}
                   </div>
@@ -201,7 +197,7 @@ export default function VideosPage() {
                     {streamName}
                   </h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                    {subjectsInStream.map((subject: string) =>
+                    {(subjectsInStream as string[]).map((subject: string) =>
                       renderSubjectCard(subject),
                     )}
                   </div>
@@ -216,6 +212,18 @@ export default function VideosPage() {
 
   const renderDisplayVideosView = () => {
     if (!selectedGrade || !selectedSubject) return null;
+
+    const gradeNumber = parseInt(selectedGrade.split(" ")[1], 10);
+    const videos = videoData.filter(
+      (v) => v.grade === gradeNumber && v.subject === selectedSubject,
+    );
+
+    const formatDuration = (seconds: number) => {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+    };
+
     return (
       <section>
         <div className="flex items-center mb-6">
@@ -231,35 +239,88 @@ export default function VideosPage() {
             Videos for {selectedGrade} - {selectedSubject}
           </h2>
         </div>
-        <div className="p-8 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700 text-center">
-          <VideoIcon className="h-16 w-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-          <p className="text-lg text-gray-600 dark:text-gray-300">
-            Video content for {selectedSubject} ({selectedGrade}) will be
-            displayed here.
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-            (Content coming soon!)
-          </p>
-        </div>
+
+        {videos.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {videos.map((video) => (
+              <Card
+                key={video.id}
+                className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white dark:bg-gray-800 h-full flex flex-col"
+              >
+                <div className="aspect-video">
+                  <iframe
+                    width="100%"
+                    height="100%"
+                    src={`https://www.youtube.com/embed/${video.youtube_id}`}
+                    title={video.title}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="rounded-t-lg"
+                  ></iframe>
+                </div>
+                <CardContent className="p-4 flex-grow flex flex-col justify-between">
+                  <div>
+                    <h4 className="font-semibold text-lg text-gray-800 dark:text-gray-100 mb-2">
+                      {video.title}
+                    </h4>
+                    {video.unit && (
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                        Unit: {video.unit}
+                      </p>
+                    )}
+                  </div>
+                  {video.duration && (
+                    <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mt-2">
+                      <Clock className="h-4 w-4 mr-2" />
+                      <span>{formatDuration(video.duration)}</span>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="p-8 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700 text-center">
+            <VideoIcon className="h-16 w-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+            <p className="text-lg text-gray-600 dark:text-gray-300">
+              No videos available for {selectedSubject} in {selectedGrade} yet.
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+              Please check back later!
+            </p>
+          </div>
+        )}
       </section>
     );
   };
 
-  return (
-    <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8 min-h-screen bg-gradient-to-br from-slate-50 to-sky-50 dark:from-gray-900 dark:to-gray-800">
-      <div className="max-w-5xl mx-auto">
-        <header className="mb-10 text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-green-500 dark:from-blue-400 dark:to-green-400 sm:text-5xl">
-            LearnFun SL Video Library
-          </h1>
-          <p className="mt-3 text-lg text-gray-600 dark:text-gray-300 sm:text-xl">
-            Select a grade and subject to find educational videos.
-          </p>
-        </header>
+  const renderCurrentView = () => {
+    if (currentView === "selectGradeView") {
+      return renderSelectGradeView();
+    } else if (currentView === "selectSubjectView") {
+      return renderSelectSubjectView();
+    } else if (currentView === "displayVideosView") {
+      return renderDisplayVideosView();
+    }
+    return null;
+  };
 
-        {currentView === "selectGradeView" && renderSelectGradeView()}
-        {currentView === "selectSubjectView" && renderSelectSubjectView()}
-        {currentView === "displayVideosView" && renderDisplayVideosView()}
+  return (
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-5xl md:text-6xl">
+            LearnFunSL Video Library
+          </h1>
+          <p className="mt-3 max-w-md mx-auto text-base text-gray-500 dark:text-gray-400 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+            Explore our collection of educational videos for all grades and
+            subjects.
+          </p>
+        </div>
+        <div className="p-4 sm:p-6 md:p-8 bg-white dark:bg-gray-900/50 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 min-h-[400px]">
+          {renderCurrentView()}
+        </div>
       </div>
     </div>
   );
