@@ -94,6 +94,7 @@
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/recharts": "^2.0.1",
     "cross-env": "^7.0.3",
     "eslint-config-next": "^15.3.3",
     "eslint-config-prettier": "^10.1.5",

@@ -1,26 +1,11 @@
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import type React from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import {
-  ClerkProvider,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
-import { ScrollToTopButton } from "@/components/ui/scroll-to-top-button";
-import { PageTransitionWrapper } from "@/components/page-transition-wrapper";
-import QueryProvider from "@/components/QueryProvider";
 import { cn } from "@/lib/utils";
 import { fontSans } from "@/lib/fonts";
-import { ThemeProvider } from "@/components/ui/theme-provider";
-import { Toaster } from "@/components/ui/toaster";
-import { NewUserModalManager } from "@/components/common/NewUserModalManager";
+import { ClientLayout } from "@/components/layout/client-layout";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -73,16 +58,12 @@ export default function RootLayout({
     <ClerkProvider
       appearance={{
         elements: {
-          // Attempt to target the modal's close button
-          // The exact key might vary, 'modalCloseButton' is a common pattern
           modalCloseButton: {
             "&:focus-visible": {
-              // Prefer focus-visible for accessibility
               outline: "none",
               boxShadow: "none",
             },
             "&:focus": {
-              // Fallback for general focus
               outline: "none",
               boxShadow: "none",
             },
@@ -98,24 +79,7 @@ export default function RootLayout({
           )}
           suppressHydrationWarning
         >
-          <QueryProvider>
-            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-              <NewUserModalManager>
-                <div className="flex-1">
-                  <Header />
-                  <PageTransitionWrapper>
-                    <div className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                      {children}
-                    </div>
-                  </PageTransitionWrapper>
-                  <Footer />
-                  <ScrollToTopButton />
-                  <SpeedInsights />
-                </div>
-                <Toaster />
-              </NewUserModalManager>
-            </ThemeProvider>
-          </QueryProvider>
+          <ClientLayout>{children}</ClientLayout>
         </body>
       </html>
     </ClerkProvider>
