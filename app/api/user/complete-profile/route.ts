@@ -1,4 +1,5 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
+import { updateUserProfile } from "@/lib/supabase/userService";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -18,13 +19,21 @@ export async function POST(req: Request) {
     }
 
     const client = await clerkClient();
-    await client.users.updateUser(userId, {
-      publicMetadata: {
+    // Atomically update both Clerk and Supabase
+    await Promise.all([
+      client.users.updateUser(userId, {
+        publicMetadata: {
+          grade,
+          language,
+          onboarding_completed: true, // Corrected typo
+        },
+      }),
+      updateUserProfile(userId, {
         grade,
-        language,
-        onboarding_complete: true,
-      },
-    });
+        preferred_language: language,
+        onboarding_completed: true,
+      }),
+    ]);
 
     return NextResponse.json({ success: true });
   } catch (error) {

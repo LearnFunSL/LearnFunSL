@@ -14,8 +14,13 @@ import { Menu, X, ChevronDown, Globe, Sun, Moon } from "lucide-react";
 import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { useTheme } from "next-themes";
+import { XpCounter } from "@/components/user/xp-counter";
 
-export function Header() {
+interface HeaderProps {
+  xp: number;
+}
+
+export function Header({ xp }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState("EN");
   const [mounted, setMounted] = useState(false);
@@ -67,12 +72,49 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            {navItems.map((item, index) => (
+            {/* Render Home link first */}
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, delay: 0 * 0.05 }}
+            >
+              <Link
+                href="/"
+                className={`relative group text-gray-700 dark:text-gray-300 transition-colors duration-200 font-medium ${pathname === "/" ? "text-blue-600 dark:text-blue-400 font-semibold" : "hover:text-blue-600 dark:hover:text-blue-400"}`}
+              >
+                Home
+                <span
+                  className={`absolute bottom-[-2px] left-0 h-0.5 bg-blue-600 dark:bg-blue-400 transition-all duration-300 ease-out group-hover:w-full ${pathname === "/" ? "w-full" : "w-0"}`}
+                ></span>
+              </Link>
+            </motion.div>
+
+            {/* Render Dashboard link for signed-in users */}
+            <SignedIn>
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2, delay: 1 * 0.05 }}
+              >
+                <Link
+                  href="/dashboard"
+                  className={`relative group text-gray-700 dark:text-gray-300 transition-colors duration-200 font-medium ${pathname === "/dashboard" ? "text-blue-600 dark:text-blue-400 font-semibold" : "hover:text-blue-600 dark:hover:text-blue-400"}`}
+                >
+                  Dashboard
+                  <span
+                    className={`absolute bottom-[-2px] left-0 h-0.5 bg-blue-600 dark:bg-blue-400 transition-all duration-300 ease-out group-hover:w-full ${pathname === "/dashboard" ? "w-full" : "w-0"}`}
+                  ></span>
+                </Link>
+              </motion.div>
+            </SignedIn>
+
+            {/* Render the rest of the nav items */}
+            {navItems.slice(1).map((item, index) => (
               <motion.div
                 key={item.href}
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2, delay: index * 0.05 }}
+                transition={{ duration: 0.2, delay: (index + 2) * 0.05 }}
               >
                 <Link
                   href={item.href}
@@ -142,7 +184,10 @@ export function Header() {
               </Button>
             </SignedOut>
             <SignedIn>
-              <UserButton afterSignOutUrl="/" />
+              <div className="flex items-center space-x-4">
+                <XpCounter xp={xp} />
+                <UserButton afterSignOutUrl="/" />
+              </div>
             </SignedIn>
           </div>
 
@@ -170,7 +215,34 @@ export function Header() {
             className="md:hidden py-4 border-t border-gray-100 dark:border-gray-800"
           >
             <nav className="flex flex-col space-y-4">
-              {navItems.map((item) => (
+              {/* Render Home link first */}
+              <Link
+                href="/"
+                className={`relative group block py-2 text-gray-700 dark:text-gray-300 transition-colors duration-200 font-medium ${pathname === "/" ? "text-blue-600 dark:text-blue-400 font-semibold" : "hover:text-blue-600 dark:hover:text-blue-400"}`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Home
+                <span
+                  className={`absolute bottom-0 left-0 h-0.5 bg-blue-600 dark:bg-blue-400 transition-all duration-300 ease-out group-hover:w-full ${pathname === "/" ? "w-full" : "w-0"}`}
+                ></span>
+              </Link>
+
+              {/* Render Dashboard link for signed-in users */}
+              <SignedIn>
+                <Link
+                  href="/dashboard"
+                  className={`relative group block py-2 text-gray-700 dark:text-gray-300 transition-colors duration-200 font-medium ${pathname === "/dashboard" ? "text-blue-600 dark:text-blue-400 font-semibold" : "hover:text-blue-600 dark:hover:text-blue-400"}`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Dashboard
+                  <span
+                    className={`absolute bottom-0 left-0 h-0.5 bg-blue-600 dark:bg-blue-400 transition-all duration-300 ease-out group-hover:w-full ${pathname === "/dashboard" ? "w-full" : "w-0"}`}
+                  ></span>
+                </Link>
+              </SignedIn>
+
+              {/* Render the rest of the nav items */}
+              {navItems.slice(1).map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}

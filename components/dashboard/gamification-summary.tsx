@@ -4,10 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge, ShieldCheck, Star } from "lucide-react";
 import { motion } from "framer-motion";
 
-export function GamificationSummary() {
+interface GamificationSummaryProps {
+  totalXp: number;
+}
+
+export function GamificationSummary({ totalXp }: GamificationSummaryProps) {
   // Mock data
   const gamificationData = {
-    level: 12,
     badges: [
       {
         name: "Perfect Week",
@@ -33,8 +36,8 @@ export function GamificationSummary() {
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           <div className="text-center mb-6">
-            <p className="text-sm text-muted-foreground">Current Level</p>
-            <p className="text-4xl font-bold">{gamificationData.level}</p>
+            <p className="text-sm text-muted-foreground">Total XP</p>
+            <p className="text-4xl font-bold">{totalXp}</p>
           </div>
           <div>
             <h4 className="font-semibold mb-3">Badges Unlocked</h4>

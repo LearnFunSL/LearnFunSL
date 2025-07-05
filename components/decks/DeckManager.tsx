@@ -140,13 +140,13 @@ export default function DeckManager() {
           </div>
           <div className="bg-green-50 dark:bg-green-900/30 rounded-lg p-3">
             <p className="text-sm text-green-600 dark:text-green-400">
-              Accuracy Rate
+              Accuracy
             </p>
             <p className="text-2xl font-bold mt-1">
               {isStatsLoading ? (
                 <Loader2 className="h-6 w-6 animate-spin" />
               ) : (
-                `${studyStats?.accuracy || 0}%`
+                `${Math.round(studyStats?.accuracy || 0)}%`
               )}
             </p>
           </div>

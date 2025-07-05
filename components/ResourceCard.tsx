@@ -4,6 +4,7 @@ import React from "react";
 import { Resource } from "@/app/lib/types";
 import { getFileIcon, formatFileSize } from "@/app/lib/resource-utils";
 import { Download, Eye } from "lucide-react";
+import { awardXP } from "@/lib/actions/xp.actions";
 
 interface ResourceCardProps {
   resource: Resource;
@@ -27,6 +28,16 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({
   };
 
   const handleDownload = () => {
+    // Award XP for downloading a resource
+    awardXP("DOWNLOAD_RESOURCE").then((result) => {
+      if (!result.success) {
+        console.error(
+          "Failed to award XP for resource download:",
+          result.error,
+        );
+      }
+    });
+
     // Basic download. For more control (e.g. cross-origin), a server-side endpoint might be needed.
     onDownload(resource.file_url, resource.title);
   };

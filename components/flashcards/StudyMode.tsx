@@ -8,6 +8,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { type DeckWithFlashcards } from "@/types/flashcard.types";
 import { useUpdateFlashcard, useCreateStudySession } from "@/hooks/queries";
 import { CheckCircle, XCircle, RotateCcw, X } from "lucide-react";
+import { awardXP } from "@/lib/actions/xp.actions";
 
 interface StudyModeProps {
   deck: DeckWithFlashcards;
@@ -36,48 +37,60 @@ const StudyMode: React.FC<StudyModeProps> = ({ deck }) => {
     return () => clearInterval(timer);
   }, [completed, startTime]);
 
-  const nextCard = useCallback(() => {
-    if (current + 1 >= cards.length) {
-      setCompleted(true);
-      // Save study session
-      createStudySession.mutate({
-        deck_id: deck.id,
-        cards_studied: cards.length,
-        correct_answers: stats.correct,
-        incorrect_answers: stats.incorrect,
-        duration_minutes: Math.ceil(elapsed / 60),
-      });
-    } else {
-      setCurrent((prev) => prev + 1);
-      setFlipped(false);
-    }
-  }, [
-    current,
-    cards,
-    createStudySession,
-    deck.id,
-    stats.correct,
-    stats.incorrect,
-    elapsed,
-  ]);
+  const handleAnswer = useCallback(
+    (isCorrect: boolean) => {
+      if (isCorrect) {
+        updateFlashcard.mutate({
+          id: cards[current].id,
+          updates: { correct_count: (cards[current].correct_count || 0) + 1 },
+        });
+      } else {
+        updateFlashcard.mutate({
+          id: cards[current].id,
+          updates: {
+            incorrect_count: (cards[current].incorrect_count || 0) + 1,
+          },
+        });
+      }
 
-  const handleCorrect = useCallback(() => {
-    updateFlashcard.mutate({
-      id: cards[current].id,
-      updates: { correct_count: (cards[current].correct_count || 0) + 1 },
-    });
-    setStats((prev) => ({ ...prev, correct: prev.correct + 1 }));
-    nextCard();
-  }, [nextCard, updateFlashcard, cards, current]);
+      const newStats = {
+        correct: stats.correct + (isCorrect ? 1 : 0),
+        incorrect: stats.incorrect + (isCorrect ? 0 : 1),
+      };
+      setStats(newStats);
 
-  const handleIncorrect = useCallback(() => {
-    updateFlashcard.mutate({
-      id: cards[current].id,
-      updates: { incorrect_count: (cards[current].incorrect_count || 0) + 1 },
-    });
-    setStats((prev) => ({ ...prev, incorrect: prev.incorrect + 1 }));
-    nextCard();
-  }, [nextCard, updateFlashcard, cards, current]);
+      if (current + 1 >= cards.length) {
+        setCompleted(true);
+        awardXP("COMPLETE_QUIZ").then((result) => {
+          if (!result.success) {
+            console.error(
+              "Failed to award XP for completing quiz:",
+              result.error,
+            );
+          }
+        });
+        createStudySession.mutate({
+          deck_id: deck.id,
+          cards_studied: cards.length,
+          correct_answers: newStats.correct,
+          incorrect_answers: newStats.incorrect,
+          duration_minutes: Math.ceil(elapsed / 60),
+        });
+      } else {
+        setCurrent((prev) => prev + 1);
+        setFlipped(false);
+      }
+    },
+    [
+      current,
+      cards,
+      stats,
+      elapsed,
+      deck.id,
+      updateFlashcard,
+      createStudySession,
+    ],
+  );
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -90,17 +103,17 @@ const StudyMode: React.FC<StudyModeProps> = ({ deck }) => {
       if (flipped) {
         if (e.key === "1" || e.key === "ArrowLeft") {
           e.preventDefault();
-          handleIncorrect();
+          handleAnswer(false);
         }
         if (e.key === "2" || e.key === "ArrowRight") {
           e.preventDefault();
-          handleCorrect();
+          handleAnswer(true);
         }
       }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [current, completed, flipped, handleCorrect, handleIncorrect]);
+  }, [completed, flipped, handleAnswer]);
 
   const resetSession = () => {
     setCompleted(false);
@@ -259,7 +272,7 @@ const StudyMode: React.FC<StudyModeProps> = ({ deck }) => {
               <Button
                 variant="destructive"
                 size="lg"
-                onClick={handleIncorrect}
+                onClick={() => handleAnswer(false)}
                 className="flex-1 max-w-xs"
               >
                 <XCircle className="w-5 h-5 mr-2" />
@@ -268,7 +281,7 @@ const StudyMode: React.FC<StudyModeProps> = ({ deck }) => {
               <Button
                 variant="default"
                 size="lg"
-                onClick={handleCorrect}
+                onClick={() => handleAnswer(true)}
                 className="flex-1 max-w-xs bg-green-600 hover:bg-green-700"
               >
                 <CheckCircle className="w-5 h-5 mr-2" />

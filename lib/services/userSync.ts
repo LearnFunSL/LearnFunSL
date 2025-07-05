@@ -39,6 +39,8 @@ export const syncUserCreation = async (data: UserData) => {
         grade: null,
         preferred_language: "en",
         onboarding_completed: false,
+        xp: 0,
+        xp_total: 0,
       });
       log.info("User created successfully", { clerkId: data.id });
       return;

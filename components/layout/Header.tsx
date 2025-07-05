@@ -2,6 +2,7 @@
 
 import { Menu } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
+import XPDisplay from "./XPDisplay";
 
 export default function Header() {
   return (
@@ -14,6 +15,7 @@ export default function Header() {
         </div>
         <div className="flex items-center gap-4">
           <ThemeToggle />
+          <XPDisplay />
           {/* User avatar placeholder */}
           <div className="h-9 w-9 rounded-full bg-gray-300 dark:bg-gray-600"></div>
         </div>

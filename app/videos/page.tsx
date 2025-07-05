@@ -13,6 +13,7 @@ import {
 } from "@/lib/subject-data";
 import { videos as videoData } from "@/lib/videos-data";
 import Image from "next/image";
+import { awardXP } from "@/lib/actions/xp.actions";
 
 const grades = Array.from({ length: 13 }, (_, i) => `Grade ${i + 1}`);
 
@@ -247,17 +248,16 @@ export default function VideosPage() {
                 key={video.id}
                 className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white dark:bg-gray-800 h-full flex flex-col"
               >
-                <div className="aspect-video">
+                <div className="aspect-video relative bg-black rounded-t-lg overflow-hidden">
                   <iframe
+                    src={`https://www.youtube.com/embed/${video.youtube_id}`}
                     width="100%"
                     height="100%"
-                    src={`https://www.youtube.com/embed/${video.youtube_id}`}
-                    title={video.title}
-                    frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
-                    className="rounded-t-lg"
-                  ></iframe>
+                    title={video.title}
+                    className="absolute top-0 left-0"
+                  />
                 </div>
                 <CardContent className="p-4 flex-grow flex flex-col justify-between">
                   <div>

@@ -10,6 +10,7 @@ import Image from "next/image";
 import { Copy, Check, SendHorizonal, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SignInButton } from "@clerk/nextjs";
+import { awardXP } from "@/lib/actions/xp.actions";
 
 interface ChatInterfaceProps {
   className?: string;
@@ -109,6 +110,13 @@ export function ChatInterface({
   const handleSendMessage = useCallback(async () => {
     const trimmedInput = inputValue.trim();
     if (!trimmedInput || isLoading || !userId) return;
+
+    // Award XP for using the AI Help feature
+    awardXP("AI_HELP").then((result) => {
+      if (!result.success) {
+        console.error("Failed to award XP for AI Help:", result.error);
+      }
+    });
 
     const newMessage: Message = {
       id: generateMessageId(),

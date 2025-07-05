@@ -6,6 +6,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { fontSans } from "@/lib/fonts";
 import { ClientLayout } from "@/components/layout/client-layout";
+import { getCurrentUserXP } from "@/lib/actions/user.actions";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -49,11 +50,12 @@ export const metadata: Metadata = {
   generator: "v0.dev",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { xp } = await getCurrentUserXP();
   return (
     <ClerkProvider
       appearance={{
@@ -79,7 +81,7 @@ export default function RootLayout({
           )}
           suppressHydrationWarning
         >
-          <ClientLayout>{children}</ClientLayout>
+          <ClientLayout xp={xp}>{children}</ClientLayout>
         </body>
       </html>
     </ClerkProvider>

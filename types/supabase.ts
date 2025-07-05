@@ -12,6 +12,8 @@ export interface UserProfile {
   onboarding_completed: boolean;
   last_active_at: string | null;
   created_at: string;
+  xp: number;
+  xp_total: number;
 }
 
 // Utility type for inserting a new user
