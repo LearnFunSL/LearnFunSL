@@ -2,6 +2,7 @@
 
 import { GroupedResources } from "@/lib/data/resources";
 import { ResourceCard } from "./resource-card";
+import ErrorBoundary from "../common/error-boundary";
 import {
   Accordion,
   AccordionContent,
@@ -48,10 +49,9 @@ export function ResourceList({ groupedResources }: ResourceListProps) {
                             <AccordionContent>
                               {groupedResources[grade][subject][type].map(
                                 (resource) => (
-                                  <ResourceCard
-                                    resource={resource}
-                                    key={resource.id}
-                                  />
+                                  <ErrorBoundary key={resource.id}>
+                                    <ResourceCard resource={resource} />
+                                  </ErrorBoundary>
                                 ),
                               )}
                             </AccordionContent>
