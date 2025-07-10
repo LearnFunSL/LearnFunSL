@@ -1,9 +1,9 @@
-import { Resource } from "@/types/resources";
+import { Content } from "@/types/resources";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 
 interface ResourceCardProps {
-  resource: Resource;
+  resource: Content;
 }
 
 export function ResourceCard({ resource }: ResourceCardProps) {

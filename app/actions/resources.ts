@@ -1,7 +1,7 @@
 "use server";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { Resource } from "@/types/resources";
+import { Content } from "@/types/resources";
 
 export async function getResources() {
   const supabase = createSupabaseServerClient();
@@ -13,5 +13,5 @@ export async function getResources() {
     return { data: null, error };
   }
 
-  return { data: data as Resource[], error: null };
+  return { data: data as Content[], error: null };
 }

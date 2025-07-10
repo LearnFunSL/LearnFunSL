@@ -29,7 +29,7 @@ import {
   gradeStreamSubjects,
   gradeTextbookSubjects,
 } from "@/lib/subject-data";
-import { Resource } from "@/types/resources";
+import { Content } from "@/types/resources";
 
 const gradeStringToNumber = (gradeString: string): number | null => {
   if (!gradeString) return null;
@@ -72,8 +72,8 @@ export default function ResourcesPage() {
   const [selectedTypeForSubject, setSelectedTypeForSubject] =
     useState<string>("");
 
-  const [allResources, setAllResources] = useState<Resource[]>([]);
-  const [filteredResources, setFilteredResources] = useState<Resource[]>([]);
+  const [allResources, setAllResources] = useState<Content[]>([]);
+  const [filteredResources, setFilteredResources] = useState<Content[]>([]);
   const [isLoadingResources, setIsLoadingResources] = useState<boolean>(true);
 
   const handleClearFilters = () => {
@@ -160,7 +160,7 @@ export default function ResourcesPage() {
       setIsLoadingResources(true);
       const { data, error } = await getResources();
       if (data) {
-        setAllResources(data);
+        setAllResources(data as Content[]);
       }
       if (error) {
         // TODO: Add user-facing error state
@@ -174,7 +174,7 @@ export default function ResourcesPage() {
 
   useEffect(() => {
     setIsLoadingResources(true);
-    let filtered: Resource[] = [...allResources];
+    let filtered: Content[] = [...allResources];
 
     // This is the main filtering logic for the "filtersAndGrades" view
     if (currentView === "filtersAndGrades") {
@@ -237,7 +237,7 @@ export default function ResourcesPage() {
         .toLowerCase()
         .replace(/[-\s]/g, "");
 
-      filtered = filtered.filter((resource: Resource) => {
+      filtered = filtered.filter((resource: Content) => {
         if (numericGrade && resource.grade !== numericGrade) return false;
         if (
           subjectForTypeView &&

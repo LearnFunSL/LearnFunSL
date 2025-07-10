@@ -1,4 +1,4 @@
-export interface Resource {
+export interface Content {
   id: string;
   title: string;
   type: "pastpaper" | "textbook" | "other";

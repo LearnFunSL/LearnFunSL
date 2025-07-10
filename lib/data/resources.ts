@@ -1,10 +1,10 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { Resource } from "@/types/resources";
+import { Content } from "@/types/resources";
 
 export type GroupedResources = {
   [grade: string]: {
     [subject: string]: {
-      [type: string]: Resource[];
+      [type: string]: Content[];
     };
   };
 };
@@ -40,7 +40,7 @@ export async function getGroupedResources() {
       acc[gradeStr][subject][type] = [];
     }
 
-    acc[gradeStr][subject][type].push(resource as Resource);
+    acc[gradeStr][subject][type].push(resource as Content);
 
     return acc;
   }, {});
