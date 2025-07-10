@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import resourcesData from "@/lib/data/resources.json";
+import { getResources } from "@/app/actions/resources";
 import ResourceCard from "./ResourceCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -29,7 +29,7 @@ import {
   gradeStreamSubjects,
   gradeTextbookSubjects,
 } from "@/lib/subject-data";
-import { Content } from "@/types/resources";
+import { Resource } from "@/types/resources";
 
 const gradeStringToNumber = (gradeString: string): number | null => {
   if (!gradeString) return null;
@@ -72,8 +72,8 @@ export default function ResourcesPage() {
   const [selectedTypeForSubject, setSelectedTypeForSubject] =
     useState<string>("");
 
-  const [allResources, setAllResources] = useState<Content[]>([]);
-  const [filteredResources, setFilteredResources] = useState<Content[]>([]);
+  const [allResources, setAllResources] = useState<Resource[]>([]);
+  const [filteredResources, setFilteredResources] = useState<Resource[]>([]);
   const [isLoadingResources, setIsLoadingResources] = useState<boolean>(true);
 
   const handleClearFilters = () => {
@@ -156,88 +156,105 @@ export default function ResourcesPage() {
   }, [currentView]);
 
   useEffect(() => {
-    setAllResources(resourcesData as Content[]);
-    setIsLoadingResources(false);
+    const fetchResources = async () => {
+      setIsLoadingResources(true);
+      const { data, error } = await getResources();
+      if (data) {
+        setAllResources(data);
+      }
+      if (error) {
+        // TODO: Add user-facing error state
+        console.error("Failed to fetch resources:", error);
+      }
+      setIsLoadingResources(false);
+    };
+
+    fetchResources();
   }, []);
 
   useEffect(() => {
     setIsLoadingResources(true);
-    let processedResources = [...allResources];
+    let filtered: Resource[] = [...allResources];
 
-    if (searchQuery.trim()) {
-      processedResources = processedResources.filter((resource) =>
-        resource.title.toLowerCase().includes(searchQuery.toLowerCase().trim()),
-      );
-    }
-
-    let shouldDisplayResources = false;
-    let finalFilteredResources: Content[] = [];
-
-    if (
-      currentView === "selectTypeForSubjectView" &&
-      gradeForSubjectView &&
-      subjectForTypeView &&
-      selectedTypeForSubject
-    ) {
-      shouldDisplayResources = true;
-      const numericGrade = gradeStringToNumber(gradeForSubjectView);
-      const typeForComparison = selectedTypeForSubject
-        .toLowerCase()
-        .replace(/\s+/g, "");
-
-      processedResources = processedResources.filter((resource) => {
-        let matches = true;
-        if (numericGrade && resource.grade !== numericGrade) matches = false;
-        if (resource.subject.toLowerCase() !== subjectForTypeView.toLowerCase())
-          matches = false;
-        if (resource.type !== typeForComparison) matches = false;
-        return matches;
-      });
-      finalFilteredResources = processedResources;
-    } else if (currentView === "filtersAndGrades") {
-      shouldDisplayResources = !!(
-        searchQuery.trim() ||
-        selectedGrade ||
-        selectedType
-      );
-      let tempResources = [...processedResources];
+    // This is the main filtering logic for the "filtersAndGrades" view
+    if (currentView === "filtersAndGrades") {
+      if (searchQuery.trim()) {
+        filtered = filtered.filter((resource) =>
+          resource.title
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase().trim()),
+        );
+      }
 
       if (selectedGrade) {
         const numericGrade = parseInt(selectedGrade.split(" ")[1], 10);
-        tempResources = tempResources.filter(
+        filtered = filtered.filter(
           (resource) => resource.grade === numericGrade,
         );
       }
+
       if (selectedYear) {
-        tempResources = tempResources.filter(
+        filtered = filtered.filter(
           (resource) => resource.year?.toString() === selectedYear,
         );
       }
+
       if (selectedTerm) {
         const termNumber = parseInt(selectedTerm.split(" ")[1], 10);
-        tempResources = tempResources.filter(
-          (resource) => resource.term === termNumber,
-        );
+        filtered = filtered.filter((resource) => resource.term === termNumber);
       }
+
       if (selectedType) {
         const typeForComparison = selectedType
           .toLowerCase()
-          .replace(/\s+/g, "");
-        tempResources = tempResources.filter(
+          .replace(/[-\s]/g, "");
+        filtered = filtered.filter(
           (resource) => resource.type === typeForComparison,
         );
       }
+
       if (selectedSubject) {
-        tempResources = tempResources.filter(
+        filtered = filtered.filter(
           (resource) =>
             resource.subject.toLowerCase() === selectedSubject.toLowerCase(),
         );
       }
 
-      finalFilteredResources = tempResources;
+      const shouldDisplay = !!(
+        searchQuery.trim() ||
+        selectedGrade ||
+        selectedType ||
+        selectedYear ||
+        selectedTerm ||
+        selectedSubject
+      );
+
+      setFilteredResources(shouldDisplay ? filtered : []);
+    } else if (currentView === "selectTypeForSubjectView") {
+      // This is the filtering logic for the browse-by-grade view
+      const numericGrade = gradeStringToNumber(gradeForSubjectView);
+      const typeForComparison = selectedTypeForSubject
+        .toLowerCase()
+        .replace(/[-\s]/g, "");
+
+      filtered = filtered.filter((resource: Resource) => {
+        if (numericGrade && resource.grade !== numericGrade) return false;
+        if (
+          subjectForTypeView &&
+          resource.subject.toLowerCase() !== subjectForTypeView.toLowerCase()
+        )
+          return false;
+        if (selectedTypeForSubject && resource.type !== typeForComparison)
+          return false;
+        return true;
+      });
+
+      setFilteredResources(selectedTypeForSubject ? filtered : []);
+    } else {
+      // Clear filters for other views
+      setFilteredResources([]);
     }
 
-    setFilteredResources(shouldDisplayResources ? finalFilteredResources : []);
     setIsLoadingResources(false);
   }, [
     searchQuery,

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, Video as VideoIcon, Clock } from "lucide-react";
+import { ArrowLeft, Video as VideoIcon, Clock, Loader2 } from "lucide-react";
 import {
   GroupedSubjects,
   StreamedSubjects,
@@ -11,9 +11,10 @@ import {
   gradeStreamSubjects,
   gradeTextbookSubjects,
 } from "@/lib/subject-data";
-import { videos as videoData } from "@/lib/videos-data";
 import Image from "next/image";
 import { awardXP } from "@/lib/actions/xp.actions";
+import { getGroupedVideoLessons } from "@/lib/actions/video.actions";
+import type { GroupedVideos, VideoLesson } from "@/types/video";
 
 const grades = Array.from({ length: 13 }, (_, i) => `Grade ${i + 1}`);
 
@@ -30,11 +31,33 @@ export default function VideosPage() {
   const [streamSubjectsForGrade, setStreamSubjectsForGrade] =
     useState<StreamedSubjects | null>(null);
 
+  const [groupedVideos, setGroupedVideos] = useState<GroupedVideos>({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     if (currentView !== "selectGradeView") {
       window.scrollTo(0, 0);
     }
   }, [currentView]);
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        setIsLoading(true);
+        const videos = await getGroupedVideoLessons();
+        setGroupedVideos(videos);
+        setError(null);
+      } catch (err) {
+        console.error("Failed to fetch video lessons:", err);
+        setError("Could not load video lessons. Please try again later.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchVideos();
+  }, []);
 
   useEffect(() => {
     if (gradeForSubjectView) {
@@ -60,7 +83,8 @@ export default function VideosPage() {
   }, [gradeForSubjectView]);
 
   const handleGradeSelect = (grade: string) => {
-    const gradeKey = `grade-${grade.split(" ")[1]}`;
+    const gradeNumber = grade.split(" ")[1];
+    const gradeKey = `grade-${gradeNumber}`;
     setSelectedGrade(grade);
     setGradeForSubjectView(gradeKey);
     setCurrentView("selectSubjectView");
@@ -90,22 +114,30 @@ export default function VideosPage() {
       <h2 className="text-2xl font-semibold mb-6 text-center text-gray-800 dark:text-white">
         Select Grade
       </h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
-        {grades.map((grade) => (
-          <Card
-            key={grade}
-            className="hover:shadow-lg transition-shadow cursor-pointer transform hover:-translate-y-1 duration-300 ease-in-out bg-white dark:bg-gray-800 rounded-xl overflow-hidden"
-            onClick={() => handleGradeSelect(grade)}
-          >
-            <CardContent className="flex flex-col items-center justify-center p-6 aspect-square">
-              <VideoIcon className="h-10 w-10 sm:h-12 sm:w-12 text-blue-600 dark:text-blue-400 mb-3" />
-              <p className="text-md sm:text-lg font-medium text-center text-gray-700 dark:text-gray-200">
-                {grade}
-              </p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="flex justify-center items-center h-40">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        </div>
+      ) : error ? (
+        <div className="text-center text-red-500">{error}</div>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+          {grades.map((grade) => (
+            <Card
+              key={grade}
+              className="hover:shadow-lg transition-shadow cursor-pointer transform hover:-translate-y-1 duration-300 ease-in-out bg-white dark:bg-gray-800 rounded-xl overflow-hidden"
+              onClick={() => handleGradeSelect(grade)}
+            >
+              <CardContent className="flex flex-col items-center justify-center p-6 aspect-square">
+                <VideoIcon className="h-10 w-10 sm:h-12 sm:w-12 text-blue-600 dark:text-blue-400 mb-3" />
+                <p className="text-md sm:text-lg font-medium text-center text-gray-700 dark:text-gray-200">
+                  {grade}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
     </section>
   );
 
@@ -128,10 +160,12 @@ export default function VideosPage() {
 
   const renderSelectSubjectView = () => {
     if (!selectedGrade) return null;
+
     const gradeNumber = parseInt(selectedGrade.split(" ")[1]);
     let titleText = `Subjects for ${selectedGrade}`;
-    if (gradeNumber >= 12 && gradeNumber <= 13)
+    if (gradeNumber >= 12) {
       titleText = `Streams for ${selectedGrade}`;
+    }
 
     return (
       <section>
@@ -215,15 +249,8 @@ export default function VideosPage() {
     if (!selectedGrade || !selectedSubject) return null;
 
     const gradeNumber = parseInt(selectedGrade.split(" ")[1], 10);
-    const videos = videoData.filter(
-      (v) => v.grade === gradeNumber && v.subject === selectedSubject,
-    );
-
-    const formatDuration = (seconds: number) => {
-      const minutes = Math.floor(seconds / 60);
-      const remainingSeconds = seconds % 60;
-      return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
-    };
+    const videos: VideoLesson[] =
+      groupedVideos[gradeNumber]?.[selectedSubject] || [];
 
     return (
       <section>
@@ -243,7 +270,7 @@ export default function VideosPage() {
 
         {videos.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {videos.map((video) => (
+            {videos.map((video: VideoLesson) => (
               <Card
                 key={video.id}
                 className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white dark:bg-gray-800 h-full flex flex-col"
@@ -273,7 +300,7 @@ export default function VideosPage() {
                   {video.duration && (
                     <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mt-2">
                       <Clock className="h-4 w-4 mr-2" />
-                      <span>{formatDuration(video.duration)}</span>
+                      <span>{video.duration}</span>
                     </div>
                   )}
                 </CardContent>
