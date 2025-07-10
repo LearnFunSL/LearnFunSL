@@ -1,4 +1,4 @@
-export interface Content {
+export interface Resource {
   id: string;
   title: string;
   type: "pastpaper" | "textbook" | "other";
@@ -18,4 +18,5 @@ export interface Content {
     original_actual_type?: string;
   };
   created_at: string;
+  download_count?: number;
 }
