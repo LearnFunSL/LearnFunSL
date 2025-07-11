@@ -6,9 +6,9 @@ export const config = {
   matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
   publicRoutes: [
     "/",
+    "/api/webhooks(.*)",
     "/resources(.*)",
     "/ai-help",
-    "/api/clerk/webhook(.*)",
     "/about",
     "/contact",
     "/videos",

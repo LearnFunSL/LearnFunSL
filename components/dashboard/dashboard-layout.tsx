@@ -1,17 +1,21 @@
-import { QuickOverview } from "./quick-overview";
+"use client";
+
 import { LearningProgress } from "./learning-progress";
 import { StudyHistory } from "./study-history";
 import { GamificationSummary } from "./gamification-summary";
 import { DailyGoals } from "./daily-goals";
-import { Leaderboard } from "./leaderboard";
 import { ProgressChart } from "./progress-chart";
 import { UserProfileCard } from "./user-profile-card";
 
 interface DashboardLayoutProps {
-  totalXp: number;
+  leaderboard: React.ReactNode;
+  quickOverview: React.ReactNode;
 }
 
-export function DashboardLayout({ totalXp }: DashboardLayoutProps) {
+export function DashboardLayout({
+  leaderboard,
+  quickOverview,
+}: DashboardLayoutProps) {
   return (
     <div className="space-y-8">
       <h1 className="text-3xl font-bold tracking-tight">Your Dashboard</h1>
@@ -20,15 +24,15 @@ export function DashboardLayout({ totalXp }: DashboardLayoutProps) {
 
       <div className="grid gap-8 grid-cols-1 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-8">
-          <QuickOverview />
-          <GamificationSummary totalXp={totalXp} />
+          {quickOverview}
+          <GamificationSummary />
           <StudyHistory />
           <UserProfileCard />
         </div>
         <div className="space-y-8">
           <LearningProgress />
           <DailyGoals />
-          <Leaderboard />
+          {leaderboard}
         </div>
       </div>
     </div>

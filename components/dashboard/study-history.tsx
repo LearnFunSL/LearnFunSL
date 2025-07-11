@@ -1,43 +1,20 @@
-"use client";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Video, FileText } from "lucide-react";
-import { motion } from "framer-motion";
+import { History } from "lucide-react";
 
 export function StudyHistory() {
-  // Mock data
-  const historyData = [
-    { type: "video", title: "Calculus Fundamentals", time: "2 days ago" },
-    { type: "paper", title: "2021 Physics Paper", time: "3 days ago" },
-    { type: "video", title: "Sri Lankan History: Part 1", time: "5 days ago" },
-  ];
-
   return (
     <Card>
       <CardHeader>
         <CardTitle>Study History</CardTitle>
       </CardHeader>
       <CardContent>
-        <motion.ul
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="space-y-4"
-        >
-          {historyData.map((item, index) => (
-            <li key={index} className="flex items-center justify-between">
-              <div className="flex items-center">
-                {item.type === "video" ? (
-                  <Video className="w-5 h-5 mr-3 text-red-500" />
-                ) : (
-                  <FileText className="w-5 h-5 mr-3 text-blue-500" />
-                )}
-                <p>{item.title}</p>
-              </div>
-              <p className="text-sm text-muted-foreground">{item.time}</p>
-            </li>
-          ))}
-        </motion.ul>
+        <div className="flex flex-col items-center justify-center h-40 text-center">
+          <History className="w-12 h-12 text-gray-400 mb-4" />
+          <h3 className="text-lg font-semibold">Coming Soon!</h3>
+          <p className="text-sm text-muted-foreground mt-1">
+            Your recent activity will be tracked here.
+          </p>
+        </div>
       </CardContent>
     </Card>
   );

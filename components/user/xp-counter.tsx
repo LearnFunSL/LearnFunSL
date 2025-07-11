@@ -1,4 +1,7 @@
+"use client";
+
 import { Star } from "lucide-react";
+import { useXpStore } from "@/store/xp-store";
 
 interface XpCounterProps {
   xp: number;

@@ -1,16 +1,29 @@
-"use client";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Flame, Star, BookOpen } from "lucide-react";
-import { motion } from "framer-motion";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { auth } from "@clerk/nextjs/server";
+import { QuickOverviewClient } from "./quick-overview-client";
 
-export function QuickOverview() {
-  // Mock data - will be replaced with data from Supabase
-  const overviewData = {
-    dailyStreak: 5,
-    xpPoints: 1250,
-    nextRecommended: "Introduction to Algebra",
-  };
+export async function QuickOverview() {
+  const supabase = createSupabaseServerClient();
+  const { userId } = await auth();
+
+  let initialXp = 0;
+  if (userId) {
+    const { data, error } = await supabase
+      .from("users")
+      .select("xp_total")
+      .eq("clerk_id", userId)
+      .single();
+
+    if (error) {
+      console.error(
+        "Error fetching initial user XP for overview:",
+        error.message,
+      );
+    } else if (data) {
+      initialXp = data.xp_total;
+    }
+  }
 
   return (
     <Card>
@@ -18,30 +31,7 @@ export function QuickOverview() {
         <CardTitle>Quick Overview</CardTitle>
       </CardHeader>
       <CardContent>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center"
-        >
-          <div className="flex flex-col items-center p-4 bg-secondary/50 rounded-lg">
-            <Flame className="w-8 h-8 text-orange-500 mb-2" />
-            <p className="text-2xl font-bold">{overviewData.dailyStreak}</p>
-            <p className="text-sm text-muted-foreground">Day Streak</p>
-          </div>
-          <div className="flex flex-col items-center p-4 bg-secondary/50 rounded-lg">
-            <Star className="w-8 h-8 text-yellow-500 mb-2" />
-            <p className="text-2xl font-bold">{overviewData.xpPoints}</p>
-            <p className="text-sm text-muted-foreground">XP Points</p>
-          </div>
-          <div className="flex flex-col items-center p-4 bg-secondary/50 rounded-lg">
-            <BookOpen className="w-8 h-8 text-blue-500 mb-2" />
-            <p className="font-semibold truncate w-full">
-              {overviewData.nextRecommended}
-            </p>
-            <p className="text-sm text-muted-foreground">Next Up</p>
-          </div>
-        </motion.div>
+        <QuickOverviewClient initialXp={initialXp} />
       </CardContent>
     </Card>
   );

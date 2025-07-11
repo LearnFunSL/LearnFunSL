@@ -15,7 +15,7 @@ export async function getCurrentUserXP() {
 
     return { xp: userProfile?.xp_total ?? 0 };
   } catch (error) {
-    console.error("Failed to fetch user XP:", error);
+    // In a production app, you'd want to log this to a dedicated service
     return { xp: 0 };
   }
 }

@@ -1,8 +1,10 @@
 "use client";
 
 import { Menu } from "lucide-react";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import Link from "next/link";
 import ThemeToggle from "./ThemeToggle";
-import XPDisplay from "./XPDisplay";
+import { Button } from "@/components/ui/button";
 
 export default function Header() {
   return (
@@ -12,12 +14,21 @@ export default function Header() {
           <button className="md:hidden">
             <Menu size={24} />
           </button>
+          {/* Placeholder for Logo or Site Name */}
+          <Link href="/" className="font-bold text-lg">
+            LearnFunSL
+          </Link>
         </div>
         <div className="flex items-center gap-4">
           <ThemeToggle />
-          <XPDisplay />
-          {/* User avatar placeholder */}
-          <div className="h-9 w-9 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+          <SignedIn>
+            <UserButton afterSignOutUrl="/" />
+          </SignedIn>
+          <SignedOut>
+            <Button asChild>
+              <Link href="/sign-in">Sign In</Link>
+            </Button>
+          </SignedOut>
         </div>
       </div>
     </header>

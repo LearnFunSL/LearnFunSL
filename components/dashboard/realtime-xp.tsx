@@ -3,13 +3,21 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSupabase } from "@/lib/supabase";
 import { useUser } from "@clerk/nextjs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-export function GamificationSummary() {
-  const [totalXp, setTotalXp] = useState<number | null>(4325);
+interface RealtimeXpProps {
+  initialTotalXp: number;
+}
+
+export function RealtimeXp({ initialTotalXp }: RealtimeXpProps) {
+  const [totalXp, setTotalXp] = useState(initialTotalXp);
   const { getAuthenticatedClient } = useSupabase();
   const { user } = useUser();
+
+  useEffect(() => {
+    setTotalXp(initialTotalXp);
+  }, [initialTotalXp]);
 
   const handleXpUpdate = useCallback((payload: any) => {
     const newXp = (payload.new as { xp_total: number }).xp_total;
@@ -24,16 +32,6 @@ export function GamificationSummary() {
 
     const setupSubscription = async () => {
       client = await getAuthenticatedClient();
-
-      // Fetch initial XP
-      const { data } = await client
-        .from("users")
-        .select("xp_total")
-        .eq("clerk_id", user.id)
-        .single();
-      if (data) {
-        setTotalXp(data.xp_total);
-      }
 
       const channel = client
         .channel(channelName)
@@ -63,21 +61,5 @@ export function GamificationSummary() {
     };
   }, [user, getAuthenticatedClient, handleXpUpdate]);
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Total Experience</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="text-center">
-          <p className="text-6xl font-bold text-primary">
-            {totalXp === null ? "4325" : totalXp.toLocaleString()}
-          </p>
-          <p className="text-sm text-muted-foreground mt-2">
-            Keep up the great work!
-          </p>
-        </div>
-      </CardContent>
-    </Card>
-  );
+  return <>{totalXp}</>;
 }
