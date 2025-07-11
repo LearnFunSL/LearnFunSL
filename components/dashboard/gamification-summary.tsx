@@ -4,31 +4,16 @@ import { useState, useEffect, useCallback } from "react";
 import { useSupabase } from "@/lib/supabase";
 import { useUser } from "@clerk/nextjs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type {
-  SupabaseClient,
-  RealtimePostgresChangesPayload,
-} from "@supabase/supabase-js";
-
-// Define a type for the payload, extending the generic Supabase type
-// Define a type for the user data within the payload
-interface UserXpData {
-  xp_total: number;
-  [key: string]: any;
-}
-
-// Define a type for the payload, extending the generic Supabase type
-type XpUpdatePayload = RealtimePostgresChangesPayload<UserXpData>;
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 export function GamificationSummary() {
   const [totalXp, setTotalXp] = useState<number | null>(4325);
   const { getAuthenticatedClient } = useSupabase();
   const { user } = useUser();
 
-  const handleXpUpdate = useCallback((payload: XpUpdatePayload) => {
-    // Type guard to ensure payload.new is not an empty object
-    if ("xp_total" in payload.new) {
-      setTotalXp(payload.new.xp_total);
-    }
+  const handleXpUpdate = useCallback((payload: any) => {
+    const newXp = (payload.new as { xp_total: number }).xp_total;
+    setTotalXp(newXp);
   }, []);
 
   useEffect(() => {
