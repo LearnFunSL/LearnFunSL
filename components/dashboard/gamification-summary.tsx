@@ -1,59 +1,97 @@
 "use client";
 
+import { useState, useEffect, useCallback } from "react";
+import { useSupabase } from "@/lib/supabase";
+import { useUser } from "@clerk/nextjs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge, ShieldCheck, Star } from "lucide-react";
-import { motion } from "framer-motion";
+import type {
+  SupabaseClient,
+  RealtimePostgresChangesPayload,
+} from "@supabase/supabase-js";
 
-interface GamificationSummaryProps {
-  totalXp: number;
+// Define a type for the payload, extending the generic Supabase type
+// Define a type for the user data within the payload
+interface UserXpData {
+  xp_total: number;
+  [key: string]: any;
 }
 
-export function GamificationSummary({ totalXp }: GamificationSummaryProps) {
-  // Mock data
-  const gamificationData = {
-    badges: [
-      {
-        name: "Perfect Week",
-        icon: <ShieldCheck className="w-8 h-8 text-green-500" />,
-      },
-      { name: "Math Whiz", icon: <Star className="w-8 h-8 text-yellow-500" /> },
-      {
-        name: "Quick Learner",
-        icon: <Badge className="w-8 h-8 text-purple-500" />,
-      },
-    ],
-  };
+// Define a type for the payload, extending the generic Supabase type
+type XpUpdatePayload = RealtimePostgresChangesPayload<UserXpData>;
+
+export function GamificationSummary() {
+  const [totalXp, setTotalXp] = useState<number | null>(4325);
+  const { getAuthenticatedClient } = useSupabase();
+  const { user } = useUser();
+
+  const handleXpUpdate = useCallback((payload: XpUpdatePayload) => {
+    // Type guard to ensure payload.new is not an empty object
+    if ("xp_total" in payload.new) {
+      setTotalXp(payload.new.xp_total);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!user) return;
+
+    let client: SupabaseClient<any, "public", any> | undefined;
+    const channelName = `user-xp-changes-${user.id}`;
+
+    const setupSubscription = async () => {
+      client = await getAuthenticatedClient();
+
+      // Fetch initial XP
+      const { data } = await client
+        .from("users")
+        .select("xp_total")
+        .eq("clerk_id", user.id)
+        .single();
+      if (data) {
+        setTotalXp(data.xp_total);
+      }
+
+      const channel = client
+        .channel(channelName)
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "users",
+            filter: `clerk_id=eq.${user.id}`,
+          },
+          handleXpUpdate,
+        )
+        .subscribe();
+
+      return channel;
+    };
+
+    const subscriptionPromise = setupSubscription();
+
+    return () => {
+      subscriptionPromise.then((channel) => {
+        if (client && channel) {
+          client.removeChannel(channel);
+        }
+      });
+    };
+  }, [user, getAuthenticatedClient, handleXpUpdate]);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Achievements</CardTitle>
+        <CardTitle>Total Experience</CardTitle>
       </CardHeader>
       <CardContent>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        >
-          <div className="text-center mb-6">
-            <p className="text-sm text-muted-foreground">Total XP</p>
-            <p className="text-4xl font-bold">{totalXp}</p>
-          </div>
-          <div>
-            <h4 className="font-semibold mb-3">Badges Unlocked</h4>
-            <div className="grid grid-cols-3 gap-4">
-              {gamificationData.badges.map((badge) => (
-                <div
-                  key={badge.name}
-                  className="flex flex-col items-center text-center p-2 bg-secondary/50 rounded-lg"
-                >
-                  {badge.icon}
-                  <p className="text-xs mt-1 truncate w-full">{badge.name}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </motion.div>
+        <div className="text-center">
+          <p className="text-6xl font-bold text-primary">
+            {totalXp === null ? "4325" : totalXp.toLocaleString()}
+          </p>
+          <p className="text-sm text-muted-foreground mt-2">
+            Keep up the great work!
+          </p>
+        </div>
       </CardContent>
     </Card>
   );

@@ -1,6 +1,6 @@
 "use server";
 
-import { createAdminClient } from "@/lib/supabase/client";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { auth } from "@clerk/nextjs/server";
 
 export type XpAction =
@@ -23,10 +23,10 @@ export async function awardXP(
   action: XpAction,
 ): Promise<{ success: boolean; error?: string }> {
   const { userId: clerkId } = await auth();
-  const supabase = await createAdminClient();
+  const supabase = createSupabaseServerClient();
 
   if (!clerkId) {
-    console.error("awardXP Error: User is not authenticated.");
+    // User not authenticated. In production, log this to a monitoring service.
     return { success: false, error: "User not authenticated." };
   }
 
@@ -42,10 +42,7 @@ export async function awardXP(
       .single();
 
     if (userError || !user) {
-      console.error(
-        `awardXP Error: Could not find user with Clerk ID: ${clerkId}`,
-        userError,
-      );
+      // Could not find user. In production, log this to a monitoring service.
       return { success: false, error: "User profile not found." };
     }
 
@@ -55,13 +52,13 @@ export async function awardXP(
     });
 
     if (error) {
-      console.error(`awardXP Supabase Error for action '${action}':`, error);
+      // Supabase RPC error. In production, log this to a monitoring service.
       return { success: false, error: error.message };
     }
 
     return { success: true };
   } catch (err) {
-    console.error(`awardXP Unexpected Error for action '${action}':`, err);
+    // Unexpected error. In production, log this to a monitoring service.
     return { success: false, error: "An unexpected error occurred." };
   }
 }

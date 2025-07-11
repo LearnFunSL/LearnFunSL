@@ -14,6 +14,7 @@ import { ThemeProvider } from "@/components/ui/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { NewUserModalManager } from "@/components/common/NewUserModalManager";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/react";
 
 interface ConditionalHeaderProps {
   xp: number;
@@ -37,14 +38,7 @@ export function ClientLayout({ children, xp }: ClientLayoutProps) {
 
   useEffect(() => {
     if (isSignedIn) {
-      awardXP("DAILY_LOGIN").then((result) => {
-        if (result.success) {
-          console.log("Daily login XP awarded successfully.");
-        } else if (result.error) {
-          console.error("Failed to award daily login XP:", result.error);
-        }
-        // No message if already awarded today (success: false, no error)
-      });
+      awardXP("DAILY_LOGIN").then();
     }
   }, [isSignedIn]);
 
@@ -61,7 +55,12 @@ export function ClientLayout({ children, xp }: ClientLayoutProps) {
             </PageTransitionWrapper>
             <Footer />
             <ScrollToTopButton />
-            <SpeedInsights />
+            {process.env.NODE_ENV === "production" && (
+              <>
+                <SpeedInsights />
+                <Analytics />
+              </>
+            )}
           </div>
           <Toaster />
         </NewUserModalManager>

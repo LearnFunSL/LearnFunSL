@@ -1,14 +1,13 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { config } from "@/lib/config.server";
 
-export function createSupabaseServerClient(useServiceRole: boolean = false) {
+export function createSupabaseServerClient() {
   const cookieStore = cookies();
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    useServiceRole
-      ? process.env.SUPABASE_SERVICE_ROLE_KEY!
-      : process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    config.NEXT_PUBLIC_SUPABASE_URL,
+    config.SUPABASE_SERVICE_ROLE_KEY,
     {
       cookies: {
         async get(name: string) {

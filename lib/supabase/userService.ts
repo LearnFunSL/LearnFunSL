@@ -1,4 +1,4 @@
-import { createAdminClient } from "@/lib/supabase/client";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
   UserProfile,
   UpdateUserProfile,
@@ -14,7 +14,7 @@ import { log } from "next-axiom";
 export const getUserProfile = async (
   clerkId: string,
 ): Promise<UserProfile | null> => {
-  const supabase = await createAdminClient();
+  const supabase = createSupabaseServerClient();
   const { data, error } = await supabase
     .from("users")
     .select("*")
@@ -38,7 +38,7 @@ export const getUserProfile = async (
 export const createUserProfile = async (
   profileData: NewUserProfile,
 ): Promise<UserProfile> => {
-  const supabase = await createAdminClient();
+  const supabase = createSupabaseServerClient();
   const { data, error } = await supabase
     .from("users")
     .insert(profileData)
@@ -63,7 +63,7 @@ export const updateUserProfile = async (
   clerkId: string,
   profileData: UpdateUserProfile,
 ): Promise<UserProfile> => {
-  const supabase = await createAdminClient();
+  const supabase = createSupabaseServerClient();
   const { data, error } = await supabase
     .from("users")
     .update(profileData)
@@ -84,7 +84,7 @@ export const updateUserProfile = async (
  * @param clerkId The Clerk ID of the user to delete.
  */
 export const deleteUserProfile = async (clerkId: string): Promise<void> => {
-  const supabase = await createAdminClient();
+  const supabase = createSupabaseServerClient();
   const { error } = await supabase
     .from("users")
     .delete()

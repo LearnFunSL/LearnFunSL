@@ -4,7 +4,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { GroupedVideos, VideoLesson } from "@/types/video";
 
 export async function getGroupedVideoLessons(): Promise<GroupedVideos> {
-  const supabase = createSupabaseServerClient(true);
+  const supabase = createSupabaseServerClient();
 
   const { data, error } = await supabase
     .from("video_lessons_")
