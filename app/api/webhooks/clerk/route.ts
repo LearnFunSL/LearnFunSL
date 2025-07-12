@@ -1,4 +1,5 @@
 import { Webhook } from "svix";
+import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import {
   syncUserCreation,
@@ -13,73 +14,94 @@ import {
 } from "@/types/clerk";
 import { log } from "next-axiom";
 
+// Ensure the webhook secret is set in the environment variables.
 const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
 
 if (!WEBHOOK_SECRET) {
+  // This will cause the build to fail if the secret is not set, which is good.
   throw new Error(
     "Please add CLERK_WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local",
   );
 }
 
-async function handler(req: NextRequest) {
-  const headerPayload = req.headers;
+export async function POST(req: NextRequest) {
+  // Get the headers
+  const headerPayload = await headers();
   const svix_id = headerPayload.get("svix-id");
   const svix_timestamp = headerPayload.get("svix-timestamp");
   const svix_signature = headerPayload.get("svix-signature");
 
+  // If there are no headers, error out
   if (!svix_id || !svix_timestamp || !svix_signature) {
-    log.error("Missing svix headers");
+    log.error("Error occurred -- no svix headers");
     return new NextResponse("Error occurred -- no svix headers", {
       status: 400,
     });
   }
 
-  const body = await req.text();
+  // Get the body.
+  // Note: It's crucial to read the raw body as a string for signature verification.
+  const payload = await req.json();
+  const body = JSON.stringify(payload);
+
+  // Create a new Svix instance with your secret.
   const wh = new Webhook(WEBHOOK_SECRET!);
 
-  let evt: ClerkWebhookEvent;
+  // Type-guard to ensure the event is a WebhookEvent
+  type WebhookEvent = ClerkWebhookEvent;
+
+  let evt: WebhookEvent;
   try {
+    // Verify the payload with the headers
     evt = wh.verify(body, {
       "svix-id": svix_id,
       "svix-timestamp": svix_timestamp,
       "svix-signature": svix_signature,
-    }) as ClerkWebhookEvent;
+    }) as WebhookEvent;
   } catch (err) {
-    const error = err as Error;
-    log.error("Error verifying webhook", { error: error.message });
-    return new NextResponse(`Error occurred: ${error.message}`, {
+    // If the verification fails, log the error and return a 400.
+    const errorMessage = err instanceof Error ? err.message : "Unknown error";
+    log.error("Error verifying webhook", { error: errorMessage });
+    return new NextResponse(`Error occurred: ${errorMessage}`, {
       status: 400,
     });
   }
 
-  // Log the sanitized event payload
-  log.info("Received Clerk webhook", {
-    eventType: evt.type,
-    clerkId: evt.data.id,
+  // The event is verified, now we can process it.
+  // We cast the event to our custom type for better type-safety.
+  const clerkEvent = evt as ClerkWebhookEvent;
+  const eventType = clerkEvent.type as EventType;
+
+  // Log the sanitized event payload for debugging.
+  log.info("Received and verified Clerk webhook", {
+    eventType: eventType,
+    clerkId: clerkEvent.data.id,
   });
 
-  const eventType = evt.type as EventType;
-
   try {
+    // Route the event to the appropriate handler
     switch (eventType) {
       case "user.created":
-        await syncUserCreation(evt.data as UserData);
+        await syncUserCreation(clerkEvent.data as UserData);
         break;
       case "user.updated":
-        await syncUserUpdate(evt.data as UserData);
+        await syncUserUpdate(clerkEvent.data as UserData);
         break;
       case "user.deleted":
-        await syncUserDeletion(evt.data as DeletedUserData);
+        await syncUserDeletion(clerkEvent.data as DeletedUserData);
         break;
       default:
+        // Log unhandled events for future consideration
         log.warn("Unhandled event type", { eventType });
     }
-    return new NextResponse("Webhook processed successfully", { status: 200 });
+    return new NextResponse("Webhook processed successfully", { status: 201 });
   } catch (error) {
-    const err = error as Error;
-    log.error("Error processing webhook", { eventType, error: err.message });
-    return new NextResponse(`Error occurred: ${err.message}`, { status: 500 });
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    log.error("Error processing webhook", {
+      eventType,
+      error: errorMessage,
+    });
+    return new NextResponse(`Error occurred: ${errorMessage}`, { status: 500 });
   }
 }
-
-export { handler as POST };

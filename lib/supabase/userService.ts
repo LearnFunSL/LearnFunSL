@@ -19,10 +19,9 @@ export const getUserProfile = async (
     .from("users")
     .select("*")
     .eq("clerk_id", clerkId)
-    .single();
+    .maybeSingle(); // Use maybeSingle() to prevent errors when no user is found.
 
-  if (error && error.code !== "PGRST116") {
-    // Ignore 'not found' errors
+  if (error) {
     log.error("Error getting user profile", { error });
     throw new Error("Could not retrieve user profile.");
   }
@@ -31,23 +30,24 @@ export const getUserProfile = async (
 };
 
 /**
- * Creates a new user profile in the database.
- * @param profileData The data for the new user profile.
- * @returns The newly created user profile.
+ * Creates or updates a user profile in the database.
+ * This function is atomic and safe for concurrent calls.
+ * @param profileData The data for the user profile.
+ * @returns The created or updated user profile.
  */
-export const createUserProfile = async (
+export const upsertUserProfile = async (
   profileData: NewUserProfile,
 ): Promise<UserProfile> => {
   const supabase = createSupabaseServerClient();
   const { data, error } = await supabase
     .from("users")
-    .insert(profileData)
+    .upsert(profileData, { onConflict: "clerk_id" })
     .select()
-    .single();
+    .single(); // .single() is safe here because upsert guarantees a single row
 
   if (error) {
-    log.error("Error creating user profile", { error });
-    throw new Error("Could not create user profile.");
+    log.error("Error upserting user profile", { error });
+    throw new Error("Could not upsert user profile.");
   }
 
   return data;
@@ -62,21 +62,21 @@ export const createUserProfile = async (
 export const updateUserProfile = async (
   clerkId: string,
   profileData: UpdateUserProfile,
-): Promise<UserProfile> => {
+): Promise<UserProfile | null> => {
   const supabase = createSupabaseServerClient();
   const { data, error } = await supabase
     .from("users")
     .update(profileData)
     .eq("clerk_id", clerkId)
-    .select()
-    .single();
+    .select();
 
   if (error) {
     log.error("Error updating user profile", { error });
     throw new Error("Could not update user profile.");
   }
 
-  return data;
+  // Return the first record, or null if no user was updated.
+  return data?.[0] || null;
 };
 
 /**
